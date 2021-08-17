@@ -1,6 +1,6 @@
 * [Musician](#musician---musicianlenweio)
 
-# Musician - [musician.lenwe.io](https://musician.lenwe.io)
+# Musician – [musician.lenwe.io](https://musician.lenwe.io)
 
 Musician is an UI add-on for *World of Warcraft* that provides music playing capability to the players. Unlike other popular MMORPGs such as *Lord of the Rings Online* or *Final Fantasy XIV*, *World of Warcraft* lacks a "bard class" or "music performance mode" which is highly appreciated by roleplayers. The goal of Musician is to fill this gap the best as possible using the limited features of the WoW UI API.
 
