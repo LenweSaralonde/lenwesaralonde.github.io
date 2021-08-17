@@ -1,4 +1,4 @@
-* [Musician](#musician---musicianlenweio)
+* [Musician](#musician--musicianlenweio)
 
 # Musician – [musician.lenwe.io](https://musician.lenwe.io)
 
