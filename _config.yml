@@ -1,3 +1,5 @@
 theme: jekyll-theme-midnight
+title: Lenwë's projects
+description: All my projects and stuff
 github:
   is_project_page: false
