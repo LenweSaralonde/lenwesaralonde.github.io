@@ -6,6 +6,7 @@ Musician is an UI add-on for *World of Warcraft* that provides music playing cap
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/HBCT-JKsoro" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="margin: auto"></iframe>
 
+
 The add-on consists in a basic wavetable synthesizer of 24 instruments. These are mostly medieval and renaissance instruments to match WoW's medieval fantasy universe. More instruments can be added as plugins.
 
 Music can be played from MIDI files, using the computer keyboard or any MIDI controller. The other players – who also have the add-on – and who are within range of the character can also listen to the music. Since add-ons have no control over the player's 3D avatar – for example to add an instrument model – the visual feedback is limited to animated notes showing above the player's nameplate. However, some standard in-game items and techniques can be used to improve the immersive experience.
