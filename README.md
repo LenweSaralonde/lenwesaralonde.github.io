@@ -11,7 +11,7 @@ The add-on consists in a basic wavetable synthesizer of 24 instruments. These ar
 Music can be played from MIDI files, using the computer keyboard or any MIDI controller. The other players – who also have the add-on – and who are within range of the character can also listen to the music. Since add-ons have no control over the player's 3D avatar – for example to add an instrument model – the visual feedback is limited to animated notes showing above the player's nameplate. However, some standard in-game items and techniques can be used to improve the immersive experience.
 
 ## Project links
-* Main add-on repository: [https://github.com/LenweSaralonde/Musician]()
+* Main add-on repository: [https://github.com/LenweSaralonde/Musician](https://github.com/LenweSaralonde/Musician)
 * CurseForge add-on page: [https://www.curseforge.com/wow/addons/musician](https://www.curseforge.com/wow/addons/musician)
 * Discord server: [https://discord.gg/ypfpGxK](https://discord.gg/ypfpGxK)
 * Wiki: [https://github.com/LenweSaralonde/Musician/wiki](https://github.com/LenweSaralonde/Musician/wiki)
