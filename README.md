@@ -8,7 +8,7 @@
 
 Musician is an UI add-on for *World of Warcraft* that provides music playing capability to the players. Unlike other popular MMORPGs such as *Lord of the Rings Online* or *Final Fantasy XIV*, *World of Warcraft* lacks a "bard class" or "music performance mode" which is highly appreciated by roleplayers. The goal of Musician is to fill this gap the best as possible using the limited features of the WoW UI API.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/HBCT-JKsoro" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/HBCT-JKsoro" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
 The add-on consists in a basic wavetable synthesizer of 24 instruments. These are mostly medieval and renaissance instruments to match WoW's medieval fantasy universe. More instruments can be added as plugins.
 
