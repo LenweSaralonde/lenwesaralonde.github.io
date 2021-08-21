@@ -27,3 +27,13 @@ In addition to the main main add-on and some plugins to provide additional featu
 * **Musician List** ([GitHub](https://github.com/LenweSaralonde/MusicianList) / [CurseForge](https://www.curseforge.com/wow/addons/musicianlist)): Save and load songs in-game.
 * **Musician MIDI** ([GitHub](https://github.com/LenweSaralonde/MusicianMIDI) / [CurseForge](https://www.curseforge.com/wow/addons/musicianmidi)): Play live music using a MIDI keyboard.
 * **Musician Piano** ([GitHub](https://github.com/LenweSaralonde/Musician_Instrument_Piano) / [CurseForge](https://www.curseforge.com/wow/addons/musician-piano)): Add the *Grand piano* instrument, based on the legendary Yamaha C7.
+
+# Story Teller – [storyteller.lenwe.io](https://storyteller.lenwe.io)
+
+A story telling addon for World of Warcraft.
+
+This addon is designed to tell long stories for roleplaying, including emotes and macros. Can be used in combination with [Musician](#musician--musicianlenweio) for song lyrics.
+
+## Project links
+* GitHub repository: [https://github.com/LenweSaralonde/StoryTeller](https://github.com/LenweSaralonde/StoryTeller)
+* CurseForge add-on page: [https://www.curseforge.com/wow/addons/story-teller](https://www.curseforge.com/wow/addons/story-teller)
