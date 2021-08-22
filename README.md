@@ -45,7 +45,7 @@ Story Teller is designed to tell long stories for roleplaying, including emotes 
 * GitHub repository: [https://github.com/LenweSaralonde/StoryTeller](https://github.com/LenweSaralonde/StoryTeller)
 * CurseForge add-on page: [https://www.curseforge.com/wow/addons/story-teller](https://www.curseforge.com/wow/addons/story-teller)
 
-## Triple Screen
+## TripleScreen
 
 Simple add-on to play WoW on 3 monitors.
 
