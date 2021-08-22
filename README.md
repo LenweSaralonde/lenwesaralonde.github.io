@@ -31,6 +31,13 @@ In addition to the main main add-on and some plugins to provide additional featu
 
 # Other add-ons for World of Warcraft
 
+## Fake Achievement
+
+Create fake achievement links to join pickup groups when the achievement you wish to unlock is requested to join.
+
+* GitHub repository: [https://github.com/LenweSaralonde/FakeAchievement](https://github.com/LenweSaralonde/FakeAchievement)
+* CurseForge add-on page: [https://www.curseforge.com/wow/addons/fake-achievement](https://www.curseforge.com/wow/addons/fake-achievement)
+
 ## Story Teller
 
 Story Teller is designed to tell long stories for roleplaying, including emotes and macros. Can be used in combination with [Musician](#musician--musicianlenweio) for song lyrics.
@@ -38,9 +45,9 @@ Story Teller is designed to tell long stories for roleplaying, including emotes 
 * GitHub repository: [https://github.com/LenweSaralonde/StoryTeller](https://github.com/LenweSaralonde/StoryTeller)
 * CurseForge add-on page: [https://www.curseforge.com/wow/addons/story-teller](https://www.curseforge.com/wow/addons/story-teller)
 
-## Fake Achievement
+## Triple Screen
 
-Create fake achievement links to join pickup groups when the achievement you wish to unlock is requested to join.
+Simple add-on to play WoW on 3 monitors.
 
-* GitHub repository: [https://github.com/LenweSaralonde/FakeAchievement](https://github.com/LenweSaralonde/FakeAchievement)
-* CurseForge add-on page: [https://www.curseforge.com/wow/addons/fake-achievement](https://www.curseforge.com/wow/addons/fake-achievement)
+* GitHub repository: [https://github.com/LenweSaralonde/TripleScreen](https://github.com/LenweSaralonde/TripleScreen)
+* CurseForge add-on page: [https://www.curseforge.com/wow/addons/triplescreen](https://www.curseforge.com/wow/addons/triplescreen)
