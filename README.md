@@ -42,7 +42,5 @@ Story Teller is designed to tell long stories for roleplaying, including emotes 
 
 Create fake achievement links to join pickup groups when the achievement you wish to unlock is requested to join.
 
-![fdfdqs](https://github.com/LenweSaralonde/lenwesaralonde.github.io/blob/master/assets/img/why-fake-achievement-was-created.jpg?raw=true)
-
 * GitHub repository: [https://github.com/LenweSaralonde/FakeAchievement](https://github.com/LenweSaralonde/FakeAchievement)
 * CurseForge add-on page: [https://www.curseforge.com/wow/addons/fake-achievement](https://www.curseforge.com/wow/addons/fake-achievement)
