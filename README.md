@@ -27,16 +27,8 @@ Music can be played from MIDI files, using the computer keyboard or any MIDI con
 In addition to the main main add-on and some plugins to provide additional features.
 * **Musician List** ([GitHub](https://github.com/LenweSaralonde/MusicianList) / [CurseForge](https://www.curseforge.com/wow/addons/musicianlist)): Save and load songs in-game.
 * **Musician MIDI** ([GitHub](https://github.com/LenweSaralonde/MusicianMIDI) / [CurseForge](https://www.curseforge.com/wow/addons/musicianmidi)): Play live music using a MIDI keyboard.
-* **Musician Piano** ([GitHub](https://github.com/LenweSaralonde/Musician_Instrument_Piano) / [CurseForge](https://www.curseforge.com/wow/addons/musician-piano)): Add the *Grand piano* instrument, based on the legendary Yamaha C7.
 
 # Other add-ons for World of Warcraft
-
-## Fake Achievement
-
-Create fake achievement links to join pickup groups when the achievement you wish to unlock is requested to join.
-
-* GitHub repository: [https://github.com/LenweSaralonde/FakeAchievement](https://github.com/LenweSaralonde/FakeAchievement)
-* CurseForge add-on page: [https://www.curseforge.com/wow/addons/fake-achievement](https://www.curseforge.com/wow/addons/fake-achievement)
 
 ## Story Teller
 
