@@ -3,13 +3,14 @@
 
 **Table of contents**
 * [Musician](#musician--musicianlenweio)
+* [Adaptive controller for World of Warcraft](#adaptive-controller-for-world-of-warcraft)
 * [Other add-ons for World of Warcraft](#other-add-ons-for-world-of-warcraft)
 
 # Musician – [musician.lenwe.io](https://musician.lenwe.io)
 
 Musician is an UI add-on for *World of Warcraft* that provides music playing capability to the players. Unlike other popular MMORPGs such as *Lord of the Rings Online* or *Final Fantasy XIV*, *World of Warcraft* lacks a "bard class" or "music performance mode" which is highly appreciated by roleplayers. The goal of Musician is to fill this gap the best as possible using the limited features of the WoW UI API.
 
-<div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/HBCT-JKsoro" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/HBCT-JKsoro" title="Musician video demo" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
 The add-on consists in a rudimentary sample-based synthesizer of 24 instruments. These are mostly medieval and renaissance instruments to match WoW's medieval fantasy universe. More instruments can be added as plugins.
 
@@ -27,6 +28,16 @@ Music can be played from MIDI files, using the computer keyboard or a MIDI contr
 In addition to the main main add-on and some plugins to provide additional features.
 * **Musician List** ([GitHub](https://github.com/LenweSaralonde/MusicianList) / [CurseForge](https://www.curseforge.com/wow/addons/musicianlist)): Save and load songs in-game.
 * **Musician MIDI** ([GitHub](https://github.com/LenweSaralonde/MusicianMIDI) / [CurseForge](https://www.curseforge.com/wow/addons/musicianmidi)): Play live music using a MIDI keyboard.
+
+# Adaptive controller for World of Warcraft
+
+The goal of this project was to make Romain, a World of Warcraft friend with severe disability, to regain control of the game so he could play again, despîte the evolution of his condition.
+
+The core of the project is a [Makey Makey](https://makeymakey.com/) card, a cheap and fun toy that can turn almost any conductive object into a standard PC keyboard and mouse input. Using salvaged wires, tape, zip ties and some freeware such as [AutoHotKey](https://www.autohotkey.com/) and custom scripts, we managed to give him back full control to the game.
+
+More information in the video description. Enable CC for english subtitles.
+
+<div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/KrIIDFBODwA" title="Adaptive controller for World of Warcraft video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
 # Other add-ons for World of Warcraft
 
