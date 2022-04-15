@@ -1,5 +1,5 @@
 
-**@LenweSaralonde** on [GitHub](https://github.com/LenweSaralonde) / [Twitter](https://twitter.com/LenweSaralonde) / [Instagram](https://instagram.com/LenweSaralonde)
+**@LenweSaralonde** on [GitHub](https://github.com/LenweSaralonde) / [Twitter](https://twitter.com/LenweSaralonde) / [YouTube](https://youtube.com/LenweSaralonde) / [Instagram](https://instagram.com/LenweSaralonde)
 
 **Table of contents**
 * [Musician](#musician--musicianlenweio)
