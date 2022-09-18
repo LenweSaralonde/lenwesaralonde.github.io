@@ -21,7 +21,7 @@ Music can be played from MIDI files, using the computer keyboard or a MIDI contr
 * CurseForge add-on page: [https://www.curseforge.com/wow/addons/musician](https://www.curseforge.com/wow/addons/musician)
 * Discord server: [https://discord.gg/ypfpGxK](https://discord.gg/ypfpGxK)
 * Wiki: [https://github.com/LenweSaralonde/Musician/wiki](https://github.com/LenweSaralonde/Musician/wiki)
-* GitHub project: [https://github.com/users/LenweSaralonde/projects/1](https://github.com/users/LenweSaralonde/projects/1)
+* GitHub project: [https://github.com/users/LenweSaralonde/projects/3](https://github.com/users/LenweSaralonde/projects/3)
 * Project tools repository: [https://github.com/LenweSaralonde/MusicianTools](https://github.com/LenweSaralonde/MusicianTools)
 
 ## Plugins
