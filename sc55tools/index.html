@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="">
+
+<head>
+	<meta charset="utf-8">
+	<title>Roland SC-55 Tools</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#fafafa">
+
+	<style>
+		ul,
+		li {
+			margin: 0;
+			padding: 0;
+			border: 0;
+			font-size: 100%;
+			font: inherit;
+			vertical-align: baseline;
+		}
+
+		ol,
+		ul {
+			list-style: none;
+		}
+
+		code {
+			display: none;
+		}
+
+		#instruments h3 {
+			text-transform: capitalize;
+		}
+
+		#instruments ul {
+			margin-left: 3em;
+		}
+
+		a:link,
+		a:visited {
+			color: #0000FF;
+		}
+
+		a.gs:link,
+		a.gs:visited {
+			background-color: #ffffbb;
+		}
+
+		a.mt32:link,
+		a.mt32:visited {
+			background-color: #ffbbff;
+		}
+
+		a:hover {
+			color: red;
+		}
+	</style>
+
+	<script>
+		let midi = null;  // global MIDIAccess object
+		function onMIDISuccess(midiAccess) {
+			midi = midiAccess;  // store in the global (in real usage, would probably keep in an object instance)
+
+			document.getElementById('devicesTitle').style.display = 'block';
+			document.getElementById('devices').style.display = 'block';
+
+			const deviceList = document.getElementById('devices');
+			let index = 0;
+			for (const entry of midiAccess.outputs) {
+				const output = entry[1];
+				const li = document.createElement('li');
+				li.addEventListener("click", onDeviceSelected);
+				li.innerHTML = `<input type="radio" name="device" value="${output.id}" id="device_${index}"><label for="device_${index}">${output.name}</label>`;
+				deviceList.append(li);
+				index++;
+			}
+
+			generateInstruments();
+
+			document.getElementById('rawMessageCode').addEventListener("keypress", function (event) {
+				if (event.key === "Enter") {
+					event.preventDefault();
+					sendRawMessage();
+				}
+			});
+		}
+
+		function onDeviceSelected() {
+			document.getElementById('actionsTitle').style.display = 'block';
+			document.getElementById('actions').style.display = 'block';
+			document.getElementById('rawMessage').style.display = 'block';
+			document.getElementById('instrumentsTitle').style.display = 'block';
+			document.getElementById('instruments').style.display = 'block';
+		}
+
+		function sendRawMessage() {
+			sendMIDICode(document.getElementById('rawMessageCode').value);
+		}
+
+		function onMIDIFailure(msg) {
+			alert(`Failed to get MIDI access - ${msg}`);
+		}
+
+		function sendMIDICode(msgCode) {
+			const msg = [];
+			[...msgCode.replace(/\s+/g, '').toUpperCase().matchAll(/([0-9A-F]{2})/g)].forEach(
+				byte => msg.push(parseInt(byte, 16))
+			);
+			sendMIDI(msg);
+		}
+
+		async function sendMIDI(msg) {
+			try {
+				const selectedDeviceRadio = document.querySelector("input[name=device]:checked");
+				if (!selectedDeviceRadio) {
+					alert(`Please select a MIDI out device first.`);
+					return;
+				}
+
+				const output = midi.outputs.get(selectedDeviceRadio.value);
+
+				await output.open();
+				await output.send(msg);
+				await output.close();
+			} catch (e) {
+				alert(e);
+			}
+		}
+
+		function generateInstruments() {
+			const allowedTypes = { '0': 'GM', '1': 'GS', '1b': 'MT-32' };
+			const styles = { '0': '', '1': 'gs', '1b': 'mt32' };
+			const instruments = document.getElementById('instruments');
+
+			const csv = document.getElementById('instrumentList').innerText.split('\n').slice(5);
+
+			let currentList;
+			for (let row of csv) {
+				row = row.replace(/^\t+/g, '');
+				if (row !== '') {
+					if (row[0] === '#') {
+						// Title part
+						const title = document.createElement('h3');
+						title.innerText = row.replace(/#\s+/g, '').toLowerCase();
+						instruments.append(title);
+
+						currentList = document.createElement('ul');
+						instruments.append(currentList);
+					} else {
+						// Instrument part
+
+						// 1b   1 127     Acou Piano 1
+						const matches = row.match(/([0-9a-z]+)\s+([0-9]+)\s+(([0-9]+)\s+)?(([0-9]+)\s+)?(.+)$/);
+						const type = matches[1];
+						const prog = parseInt(matches[2], 10);
+						const msb = parseInt(matches[4] || '0', 10);
+						const lsb = parseInt(matches[6] || '0', 10);
+						const name = matches[7];
+
+						if (allowedTypes[type]) {
+							const li = document.createElement('li');
+							const button = document.createElement('a');
+							button.href = '#';
+							li.append(button);
+							button.addEventListener("click", function (event) {
+								event.preventDefault();
+								selectInstrument(prog, msb, lsb);
+							});
+							button.innerText = name;
+							// Not GM type
+							if (type !== '0') {
+								button.classList.add(styles[type]);
+								button.innerText += ` (${allowedTypes[type]})`;
+							}
+							currentList.append(li);
+						}
+					}
+				}
+			}
+		}
+
+		function selectInstrument(prog, msb, lsb) {
+			const channel = parseInt(document.getElementById('channel').value, 16);
+			const msg = [
+				0xB0 + channel, 00, msb, // MSB
+				0xB0 + channel, 20, lsb, // LSB
+				0xC0 + channel, prog - 1, // Program change
+			];
+			sendMIDI(msg);
+		}
+
+		window.addEventListener('load', function () {
+			navigator.requestMIDIAccess({ sysex: true }).then(onMIDISuccess, onMIDIFailure);
+		})
+	</script>
+</head>
+
+<body>
+
+	<h1>Roland SC-55 Tools</h1>
+
+	<h2 id="devicesTitle" style="display: none">Select device</h2>
+
+	<ul id="devices" style="display: none"></ul>
+
+	<h2 id="actionsTitle" style="display: none">Action</h2>
+
+	<p id="actions" style="display: none">
+		<button type="button" onclick="sendMIDICode('F0 41 10 42 12 40 00 7F 00 41 F7')">GS Reset</button>
+	</p>
+
+	<p id="rawMessage" style="display: none">
+		<input type="text" id="rawMessageCode" size="40">
+		<button type="button" onclick="sendRawMessage()">Send Raw Message
+			(hex)</button>
+	</p>
+
+	<h2 id="instrumentsTitle" style="display: none">Change Instrument</h2>
+
+	<div id="instruments" style="display: none">
+		<h3><label for="channel">Channel: </label>
+			<select id="channel">
+				<option value="0">1</option>
+				<option value="1">2</option>
+				<option value="2">3</option>
+				<option value="3">4</option>
+				<option value="4">5</option>
+				<option value="5">6</option>
+				<option value="6">7</option>
+				<option value="7">8</option>
+				<option value="8">9</option>
+				<option value="9">10</option>
+				<option value="A">11</option>
+				<option value="B">12</option>
+				<option value="C">13</option>
+				<option value="D">14</option>
+				<option value="E">15</option>
+				<option value="F">16</option>
+			</select>
+		</h3>
+
+	</div>
+
+	<code id="instrumentList">
+		# Source: http://eric.hurtebis.chez-alice.fr/patches/inst.htm
+		# MIDI Instruments (Voices)
+		# type (GM=0, GS=1, Roland SC-88=1a, MT-32=1b, XG=2),
+		# patch number(+1), Bank Select MSB, LSB, instrument name
+
+		# PIANO
+		0    1         Acoustic Grand Piano/Piano 1
+		1    1   8     Piano 1w
+		1    1  16     Piano 1d
+		1b   1 127     Acou Piano 1
+		2    1   0   1 Grand PianoK
+		2    1   0  18 MelloGrP
+		2    1   0  40 PianoStr
+		2    1   0  41 Dream
+		0    2         Bright Acoustic Piano/Piano 2
+		1    2   8     Piano 2w
+		1b   2 127     Acou Piano 2
+		2    2   0   1 Bright Piano K
+		0    3         Electric Grand Piano/Piano 3
+		1a   3   1     EG+Rhodes1
+		1a   3   2     EG+Rhodes2
+		1    3   8     Piano 3w
+		1b   3 127     Acou Piano 3
+		2    3   0   1 Electric Grand Piano K
+		2    3   0  32 Det.CP80
+		2    3   0  40 ElGrPno1
+		2    3   0  41 ElGrPno2
+		0    4         Honky-tonk Piano
+		1    4   8     Honky-tonk w/Old Upright
+		1b   4 127     Elec Piano 1
+		2    4   0   1 Honky Tonk K
+		0    5         Electric Piano 1
+		1    5   8     Detuned EP 1
+		1    5  16     E.Piano 1w
+		1    5  24     60's E.Piano
+		1a   5  25     Hard Rhodes
+		1a   5  26     MellowRhodes
+		1b   5 127     Elec Piano 2
+		2    5   0   1 Electric Piano 1K
+		2    5   0  18 MelloEP1
+		2    5   0  32 Chor.EP1
+		2    5   0  40 HardEl.P
+		2    5   0  45 VX El.P1
+		2    5   0  64 60sEl.P
+		0    6         Electric Piano 2
+		1    6   8     Detuned EP 2
+		1    6  16     E.Piano 2w/Soft FM EP
+		1a   6  24     Hard FM EP
+		1b   6 127     Elec Piano 3
+		2    6   0   1 Electric Piano2 K
+		2    6   0  32 Chor.EP2
+		2    6   0  33 DX Hard
+		2    6   0  34 DXLegend
+		2    6   0  40 DX Phase
+		2    6   0  41 DX+Analg
+		2    6   0  42 DXKotoEP
+		2    6   0  45 VX El.P2
+		0    7         Harpsichord
+		1    7   8     Coupled Hps.
+		1    7  16     Harpsi.w
+		1    7  24     Harpsi.o
+		1b   7 127     Elec Piano 4
+		2    7   0   1 Harpsichord K
+		2    7   0  25 Harpsi.2
+		2    7   0  35 Harpsi.3
+		0    8         Clavinet
+		1b   8 127     Honkytonk
+		2    8   0   1 Clavinet K
+		2    8   0  27 ClaviWah
+		2    8   0  64 PulseClv
+		2    8   0  65 PierceCl
+
+		# CHROMATIC PERCUSSION
+		0    9         Celesta
+		1b   9 127     Elec Org 1
+		2   20   0  32 ChurOrg3
+		2   20   0  35 ChurOrg2
+		2   20   0  40 NotreDam
+		2   20   0  64 OrgFlute
+		2   20   0  65 TrmOrgFl
+		0   10         Glockenspiel
+		1b  10 127     Elec Org 2
+		0   11         Music Box
+		1b  11 127     Elec Org 3
+		2   11   0  64 Orgel
+		0   12         Vibraphone
+		1a  12   1     Hard Vibe
+		1   12   8     Vib.w
+		1b  12 127     Elec Org 4
+		2   12   0   1 VibesK
+		2   12   0  45 HardVibe
+		0   13         Marimba
+		1   13   8     Marimba w
+		1a  13  16     Barafon
+		1a  13  17     Barafon 2
+		1a  13  24     Log Drum
+		1b  13 127     Pipe Org 1
+		2   13   0   1 Marimba K
+		2   13   0  64 SineMrmb
+		2   13   0  97 Balafon2
+		2   13   0  98 Log Drum
+		0   14         Xylophone
+		1b  14 127     Pipe Org 2
+		0   15         Tubular bells
+		1   15   8     Church Bell
+		1   15   9     Carillon
+		1b  15 127     Pipe Org 3
+		2   15   0  96 Church Bell
+		2   15   0  97 Carillon
+		0   16         Dulcimer/Santur
+		1a  16   1     Santur 2
+		1a  16   8     Cimbalom
+		1b  16 127     Accordion
+		2   16   0  35 Dulcimr2
+		2   16   0  96 Cimbalom
+		2   16   0  97 Santur
+
+		# ORGAN
+		0   17         Drawbar Organ/Organ 1/Hammond
+		1a  17   1     Organ 101
+		1   17   8     Detuned Or.1
+		1a  17   9     Organ 109
+		1   17  16     60's Organ 1
+		1a  17  17     60's Organ 2
+		1a  17  18     60's Organ 3
+		1a  17  24     Cheese Organ
+		1   17  32     Organ 4
+		1a  17  33     Even Bar
+		1a  17  40     Organ Bass
+		1b  17 127     Harpsi 1
+		2   17   0  32 DetDrwOr
+		2   17   0  33 60sDrOr1
+		2   17   0  34 60sDrOr2
+		2   17   0  35 70sDrOr1
+		2   17   0  36 DrawOrg2
+		2   17   0  37 60sDrOr3
+		2   17   0  38 EvenBar
+		2   17   0  40 16+2"2/3
+		2   17   0  64 Organ Ba
+		2   17   0  65 70sDrOr2
+		2   17   0  66 CheezOrg
+		2   17   0  67 DrawOrg3
+		0   18         Percussive Organ/Organ 2
+		1a  18   1     Organ 201
+		1   18   8     Detuned Or.2
+		1   18  32     Organ 5
+		1b  18 127     Harpsi 2
+		2   18   0  24 70sPcOr1
+		2   18   0  32 DetPrcOr
+		2   18   0  33 LiteOrg
+		2   18   0  37 PercOrg2
+		0   19         Rock Organ/Organ 3
+		1a  19   8     Rotary Org.
+		1a  19  16     Rotary Org.S
+		1a  19  24     Rotary Org.F
+		1b  19 127     Harpsi 3
+		2   19   0  64 RotaryOr
+		2   19   0  65 SlwRotar
+		2   19   0  66 FstRotar
+		0   20         Church Organ
+		1   20   8     Church Org.2
+		1   20  16     Church Org.3
+		1a  20  24     Organ Flute
+		1a  20  32     Trem.Flute
+		1b  20 127     Clavi 1
+		0   21         Reed Organ
+		1b  21 127     Clavi 2
+		2   21   0  40 Puff Org
+		0   22         Accordion /Fr
+		1   22   8     Accordion It
+		1b  22 127     Clavi 3
+		2   22   0  32 AccordIt
+		0   23         Harmonica
+		1a  23   1     Harmonica 2
+		1b  23 127     Celesta 1
+		2   23   0  32 Harmo 2
+		0   24         Tango Accordion/Bandoneon
+		1b  24 127     Celesta 2
+		2   24   0  64 TngoAcd2
+
+		# GUITAR
+		0   25         Acoustic Guitar(nylon)/Nylon-str Gt.
+		1   25   8     Ukulele
+		1   25  16     Nylon Gt.o
+		1a  25  24     Velo Harmnix
+		1   25  32     Nylon Gt.2
+		1a  25  40     Lequint Gt.
+		1b  25 127     Syn Brass 1
+		2   25   0  16 NylonGt2
+		2   25   0  25 NylonGt3
+		2   25   0  43 VelGtHrm
+		2   25   0  96 Ukelele
+		0   26         Acoustic Guitar(steel)/Steel-str Gt.
+		1   26   8     12-str Guitar
+		1a  26   9     Nylon+Steel
+		1   26  16     Mandolin
+		1a  26  32     Steel Gt.2
+		1b  26 127     Syn Brass 2
+		2   26   0  16 SteelGt2
+		2   26   0  35 12StrGtr
+		2   26   0  40 Nyln&Stl
+		2   26   0  41 Stl&Body
+		2   26   0  96 Mandolin
+		0   27         Electric Guitar(jazz)/Jazz Gt.
+		1a  27   1     Mellow Gt.
+		1   27   8     Hawaiian Gt./Pedal Steel
+		1b  27 127     Syn Brass 3
+		2   27   0  18 MelloGtr
+		2   27   0  32 JazzAmp
+		0   28         Electric Guitar(clean)/Clean Gt.
+		1   28   8     Chorus Gt.
+		1b  28 127     Syn Brass 4
+		2   28   0  32 ChorusGt
+		0   29         Electric Guitar(muted)/Muted Gt.
+		1a  29   1     Muted Dis.Gt
+		1   29   8     Funk Gt/Funk Pop
+		1   29  16     Funk Gt.2
+		1b  29 127     Syn Bass 1
+		2   29   0  40 FunkGtr1
+		2   29   0  41 MuteStlG
+		2   29   0  43 FunkGtr2
+		2   29   0  45 Jazz Man
+		0   30         Overdriven Guitar
+		1b  30 127     Syn Bass 2
+		2   30   0  43 Gt.Pinch
+		0   31         Distortion Guitar
+		1a  31   1     Dist.Gt 2
+		1a  31   2     Dazed Guitar
+		1   31   8     Feedback Gt.
+		1a  31   9     Feedback Gt2
+		1a  31  16     Power Guitar
+		1a  31  17     Power Gt.2
+		1a  31  18     5th Dist.
+		1a  31  24     Rock Rhythm
+		1a  31  25     Rock Rhythm2
+		1b  31 127     Syn Bass 3
+		2   31   0  40 FeedbkGt
+		2   31   0  41 FeedbGt2
+		0   32         Guitar Harmonics
+		1   32   8     Gt.Feedback
+		1a  32  16     Ac.Gt.Harmonx
+		1b  32 127     Syn Bass 4
+		2   32   0  65 GtFeedbk
+		2   32   0  66 GtrHrmo2
+
+		# BASS
+		0   33         Acoustic Bass
+		1b  33 127     Fantasy
+		2   33   0  40 Jazz Rhythm
+		2   33   0  45 VX Upright
+		0   34         Electric Bass(finder)/Fingered Bass
+		1a  34   1     Fingered Bs2
+		1a  34   2     Jazz Bass
+		1b  34 127     Harmo Pan
+		2   34   0  18 FingrDrk
+		2   34   0  27 FlangeBa
+		2   34   0  40 Ba&DstEG
+		2   34   0  43 FngrSlap
+		2   34   0  45 FngBass2
+		2   34   0  65 ModAlem
+		0   35         Electric Bass(pick)/Picked Bass
+		1a  35   8     Mute PickBs.
+		1b  35 127     Chorale
+		2   35   0  28 MutePkBa
+		0   36         Fretless Bass
+		1a  36   1     Fretless Bs2
+		1a  36   2     Fretless Bs3
+		1a  36   3     Fretless Bs4
+		1a  36   5     Mr.Smooth
+		1b  36 127     Glasses
+		2   36   0  32 Fretles2
+		2   36   0  33 Fretles3
+		2   36   0  34 Fretles4
+		2   36   0  96 SynFretl
+		2   36   0  97 Smooth
+		0   37         Slap Bass 1
+		1a  37   8     Reso Slap
+		1b  37 127     Soundtrack
+		2   37   0  27 ResoSlap
+		2   37   0  32 PunchThm
+		0   38         Slap Bass 2
+		1b  38 127     Atmosphere
+		2   38   0  43 VeloSlap
+		0   39         Synth Bass 1
+		1   39   1     Synth Bass 101
+		1   39   8     Synth Bass 3/Acid Bass
+		1a  39  10     Tekno Bass
+		1a  39  16     Reso SH Bass
+		1b  39 127     Warm Bell
+		2   39   0  18 SynBa1Dk
+		2   39   0  20 FastResB
+		2   39   0  24 AcidBass
+		2   39   0  35 Clv Bass
+		2   39   0  40 Techno Bass
+		2   39   0  64 Oscar
+		2   39   0  65 SqrBass
+		2   39   0  66 RubberBa
+		2   39   0  96 Hammer
+		0   40         Synth Bass 2
+		1a  40   1     Synth Bass 201
+		1a  40   2     Modular Bass
+		1a  40   3     Seq Bass
+		1   40   8     Synth Bass 4/Beef FM Bass
+		1a  40   9     X Wire Bass
+		1   40  16     Rubber Bass
+		1a  40  17     SH101 Bass 1
+		1a  40  18     SH101 Bass 2
+		1a  40  19     Smooth Bass
+		1b  40 127     Funny Vox
+		2   40   0   6 MelloSB1
+		2   40   0  12 Seq Bass
+		2   40   0  18 SynBa1Dk
+		2   40   0  19 SynBa2Dk
+		2   40   0  32 SmthBa 2
+		2   40   0  40 Modular Bass
+		2   40   0  41 DX Bass
+		2   40   0  64 X WireBa
+
+		# STRINGS & ORCHESTRA
+		0   41         Violin
+		1   41   8     Slow Violin
+		1b  41 127     Echo Bell
+		2   41   0   8 SlowVln
+		2   41   0  18 ClkSynBa
+		0   42         Viola
+		1b  42 127     Ice Rain
+		0   43         Cello
+		1b  43 127     Oboe 2001
+		0   44         Contrabass
+		1b  44 127     Echo Pan
+		0   45         Tremolo Strings
+		1a  45   8     Slow Tremolo
+		1a  45   9     Suspense Str
+		1b  45 127     Doctor Solo
+		2   45   0   8 SlowTrStr
+		2   45   0  40 Susp Str
+		0   46         Pizzicato Strings
+		1b  46 127     School Daze
+		0   47         Orchestral Harp
+		1b  47 127     Bellsinger
+		2   47   0  40 Yang Chin
+		0   48         Timpani
+		1b  48 127     Square Wave
+
+		# ENSEMBLE
+		0   49         Strings Ensemble 1/Strings
+		1a  49   1     Strings 2
+		1   49   8     Orchestra
+		1a  49   9     Orchestra 2
+		1a  49  10     Tremolo Orch
+		1a  49  11     Choir Str.
+		1a  49  16     St.Strings
+		1a  49  24     Velo Strings
+		1b  49 127     Str Sect 1
+		2   49   0   3 S.Strngs
+		2   49   0   8 SlowStr
+		2   49   0  24 ArcoStr
+		2   49   0  35 60sStrng
+		2   49   0  40 Orchestra
+		2   49   0  41 Orchstr2
+		2   49   0  42 TremOrch
+		2   49   0  45 VeloStr
+		0   50         Strings Ensemble 2/Slow Strings
+		1a  50   1     SlowStrings2
+		1a  50   8     Legato Str.
+		1a  50   9     Warm Strings
+		1a  50  10     St.Slow Str.
+		1b  50 127     Str Sect 2
+		2   50   0   3 S.SlwStr
+		2   50   0   8 LegatoSt
+		2   50   0  40 Warm Str
+		2   50   0  41 Kingdom
+		2   50   0  64 70s Str
+		0   51         Syn.Strings 1
+		1a  51   1     OB Strings
+		1   51   8     Syn.Strings 3
+		1b  51 127     Str Sect 3
+		2   51   0  27 ResoStr
+		2   51   0  64 Syn Str4
+		2   51   0  65 SS Str
+		0   52         Syn.Strings 2
+		1b  52 127     Pizzicato
+		0   53         Choir Aahs
+		1a  53   8     St.Choir
+		1a  53   9     Mello Choir
+		1   53  32     Choir Aahs 2
+		1b  53 127     Violin 1
+		2   53   0   3 S.Choir
+		2   53   0  16 Ch.Aahs2
+		2   53   0  32 MelChoir
+		2   53   0  40 ChoirStr
+		0   54         Voice Oohs
+		1b  54 127     Violin 2
+		0   55         Synvox
+		1a  55   8     Syn.Voice
+		1b  55 127     Cello 1
+		2   55   0  40 SynVox2
+		2   55   0  41 Choral
+		2   55   0  64 AnaVoice
+		0   56         Orchestra Hit
+		1a  56   8     Impact Hit
+		1a  56   9     Philly Hit
+		1a  56  10     Double Hit
+		1a  56  16     Lo Fi Rave
+		1b  56 127     Cello 2
+		2   56   0  35 OrchHit2
+		2   56   0  64 Impact
+
+		# BRASS
+		0   57         Trumpet
+		1a  57   1     Trumpet 2
+		1a  57   8     Flugel Horn
+		1a  57  24     Bright Tp.
+		1a  57  25     Warm Tp.
+		1b  57 127     Contrabass
+		2   57   0  16 Trumpet2
+		2   57   0  17 BriteTrp
+		2   57   0  32 WarmTrp
+		0   58         Trombone
+		1   58   1     Trombone 2
+		1b  58 127     Harp 1
+		2   58   0  18 Trmbone2
+		0   59         Tuba
+		1a  59   1     Tuba 2
+		1b  59 127     Harp 2
+		2   59   0  16 Tuba 2
+		0   60         MutedTrumpet
+		1b  60 127     Guitar 1
+		0   61         French Horn
+		1   61   1     French Horn2
+		1a  61   8     Fr.Horn Solo
+		1a  61  16     Horn Orch
+		1b  61 127     Guitar 2
+		2   61   0   6 FrHrSolo
+		2   61   0  32 FrHorn2
+		2   61   0  37 HornOrch
+		0   62         Brass Section/Brass 1
+		1   62   8     Brass 2
+		1a  62  16     Brass Fall
+		1b  62 127     Elec Gtr 1
+		2   62   0  35 Tp&TbSec
+		2   62   0  40 BrassSec2
+		2   62   0  41 HiBrass
+		2   62   0  42 MelloBrs
+		0   63         Synth Brass 1
+		1a  63   1     Poly Brass
+		1   63   8     Synth Brass 3
+		1a  63   9     Quack Brass
+		1   63  16     Analog Brass1/Octave Brass
+		1b  63 127     Elect Gtr 2
+		2   63   0  12 QuackBr
+		2   63   0  20 RezSynBr
+		2   63   0  24 PolyBrss
+		2   63   0  27 SynBras3
+		2   63   0  32 JumpBrss
+		2   63   0  45 AnaVelBr
+		2   63   0  64 AnaBrss1
+		0   64         Synth Brass 2
+		1a  64   1     Soft Brass
+		1   64   8     Synth Brass 4
+		1   64  16     Analog Brass 2/Velo Brass 1
+		1a  64  17     Velo Brass 2
+		1b  64 127     Sitar
+		2   64   0  18 Soft Brs
+		2   64   0  40 SynBras4
+		2   64   0  41 ChorBrss
+		2   64   0  45 VelBras2
+		2   64   0  64 AnaBras2
+
+		# REED
+		0   65         Soprano Sax
+		1b  65 127     Acou Bass 1
+		0   66         Alto Sax
+		1a  66   8     Hyper Alto
+		1b  66 127     Acou Bass 2
+		2   66   0  40 Sax Sect
+		2   66   0  43 HyprAlto
+		0   67         Tenor Sax
+		1a  67   8     BreathyTenor
+		1b  67 127     Elec Bass 1
+		2   67   0  40 BrthTnSx
+		2   67   0  41 SoftTenr
+		2   67   0  64 TnrSax 2
+		0   68         Baritone Sax
+		1b  68 127     Elec Bass 2
+		0   69         Oboe
+		1b  69 127     Slap Bass 1
+		0   70         English Horn
+		1b  70 127     Slap Bass 2
+		0   71         Bassoon
+		1b  71 127     Fretless 1
+		0   72         Clarinet
+		1a  72   8     Bs.Clarinet
+		1b  72 127     Fretless 2
+
+		# PIPE
+		0   73         Piccolo
+		1b  73 127     Flute 1
+		0   74         Flute
+		1b  74 127     Flute 2
+		0   75         Recorder
+		1b  75 127     Piccolo 1
+		0   76         Pan Flute
+		1a  76   8     Kawala
+		1b  76 127     Piccolo 2
+		0   77         Blown Bottle/Bottle Blow
+		1b  77 127     Recorder
+		0   78         Shakuhachi
+		1b  78 127     Pan Pipes
+		0   79         Whistle
+		1b  79 127     Sax 1
+		0   80         Ocarina
+		1b  80 127     Sax 2
+
+		# SYNTH LEAD
+		0   81         Lead 1 (square)/Square Wave
+		1   81   1     Square
+		1a  81   2     Hollow Mini
+		1a  81   3     Mellow FM
+		1a  81   4     CC Solo
+		1a  81   5     Shmoog
+		1a  81   6     LM Square
+		1   81   8     Sine Wave
+		1b  81 127     Sax 3
+		2   81   0   6 Square 2
+		2   81   0   8 LMSquare
+		2   81   0  18 Hollow
+		2   81   0  19 Shmoog
+		2   81   0  64 Mellow
+		2   81   0  65 SoloSine
+		2   81   0  66 SineLead
+		0   82         Lead 2 (sawtooth)/Saw Wave
+		1   82   1     Saw
+		1a  82   2     Pulse Saw
+		1a  82   3     Feline GR
+		1a  82   4     Big Lead
+		1a  82   5     Velo Lead
+		1a  82   6     GR-300
+		1a  82   7     LA Saw
+		1   82   8     Doctor Solo
+		1a  82  16     Waspy Synth
+		1b  82 127     Sax 4
+		2   82   0   6 Saw 2
+		2   82   0   8 ThickSaw
+		2   82   0  18 DynaSaw
+		2   82   0  19 DigiSaw
+		2   82   0  20 Big Lead
+		2   82   0  24 HeavySyn
+		2   82   0  25 WaspySyn
+		2   82   0  40 Pulse Saw
+		2   82   0  41 Dr. Lead
+		2   82   0  45 VeloLead
+		2   82   0  96 Seq Ana
+		0   83         Lead 3 (calliope)/Syn.Calliope
+		1a  83   1     Vent Synth
+		1a  83   2     Pure PanLead
+		1b  83 127     Clarinet 1
+		2   83   0  65 Pure Pad
+		0   84         Lead 4 (chiff)/Chiffer Lead
+		1b  84 127     Clarinet 2
+		2   84   0  64 Rubby
+		0   85         Lead 5 (charang)/Charang
+		1a  85   8     Dist.Lead
+		1b  85 127     Oboe
+		2   85   0  64 DistLead
+		2   85   0  65 WireLead
+		0   86         Lead 6 (voice)/Solo Vox
+		1b  86 127     Engl Horn
+		2   86   0  24 SynthAah
+		2   86   0  64 VoxLead
+		0   87         Lead 7 (fifths)/5th Saw Wave
+		1a  87   1     Big Fives
+		1b  87 127     Bassoon
+		2   87   0  35 Big Five
+		0   88         Lead 8 (bass+lead)/Bass & Lead
+		1a  88   1     Big & Raw
+		1a  88   2     Fat & Perky
+		1b  88 127     Harmonica
+		2   88   0  16 Big&Low
+		2   88   0  64 Fat&Prky
+		2   88   0  65 SoftWurl
+
+		# SYNTH PAD
+		0   89         Pad 1 (new age)/Fantasia
+		1a  89   1     Fantasia 2
+		1b  89 127     Trumpet 1
+		2   89   0  64 Fantasy2
+		0   90         Pad 2 (warm)/Warm Pad
+		1a  90   1     Thick Pad
+		1a  90   2     Horn Pad
+		1a  90   3     RotaryString
+		1a  90   4     Soft Pad
+		1b  90 127     Trumpet 2
+		2   90   0  16 ThickPad
+		2   90   0  17 Soft Pad
+		2   90   0  18 SinePad
+		2   90   0  64 Horn Pad
+		2   90   0  65 RotarStr
+		0   91         Pad 3 (polysynth)/Polysynth
+		1a  91   1     80's PolySyn
+		1b  91 127     Trombone 1
+		2   91   0  64 PolyPd80
+		2   91   0  65 ClickPad
+		2   91   0  66 Ana Pad
+		2   91   0  67 SquarPad
+		0   92         Pad 4 (choir)/Space Voice
+		1a  92   1     Heaven II
+		1b  92 127     Trombone 2
+		2   92   0  64 Heaven2
+		2   92   0  66 Itopia
+		2   92   0  67 CC Pad
+		0   93         Pad 5 (bowed)/Bowed Glass
+		1b  93 127     Fr Horn 1
+		2   93   0  64 Glacier
+		2   93   0  65 GlassPad
+		0   94         Pad 6 (metallic)/Metal Pad
+		1a  94   1     Tine Pad
+		1a  94   2     Panner Pad
+		1b  94 127     Fr Horn 2
+		2   94   0  64 Tine Pad
+		2   94   0  65 Pan Pad
+		0   95         Pad 7 (halo)/Halo Pad
+		1b  95 127     Tuba
+		0   96         Pad 8 (sweep)/Sweep Pad
+		1a  96   1     Polar Pad
+		1a  96   8     Converge
+		1a  96   9     Shwimmer
+		1a  96  10     Celestial Pd
+		1b  96 127     Brs Sect 1
+		2   96   0  20 Shwimmer
+		2   96   0  27 Converge
+		2   96   0  64 PolarPad
+		2   96   0  66 Celstial
+
+		# SYNTH EFFECT
+		0   97         FX 1 (rain)/Ice Rain
+		1a  97   1     Harmo Rain
+		1a  97   2     African Wood
+		1a  97   8     Clavi Pad
+		1b  97 127     Brs Sect 2
+		2   97   0  45 ClaviPad
+		2   97   0  64 HrmoRain
+		2   97   0  65 AfrcnWod
+		2   97   0  66 Caribean
+		0   98         FX 2 (soundtrack)/Soundtrack
+		1a  98   1     Ancestral
+		1a  98   2     Prologue
+		1a  98   8     Rave
+		1b  98 127     Vibe 1
+		2   98   0  27 Prologue
+		2   98   0  64 Ancestrl
+		0   99         FX 3 (crystal)/Crystal
+		1   99   1     Syn Mallet
+		1a  99   2     Soft Crystal
+		1a  99   3     Round Glock
+		1a  99   4     Loud Glock
+		1a  99   5     GlockenChime
+		1a  99   6     Clear Bells
+		1a  99   7     ChristmasBel
+		1a  99   8     Vibra Bells
+		1a  99   9     Digi Bells
+		1a  99  16     Choral Bells
+		1a  99  17     Air Bells
+		1a  99  18     Bell Harp
+		1a  99  19     Gamelimba
+		1b  99 127     Vibe 2
+		2   99   0  12 SynDrCmp
+		2   99   0  14 Popcorn
+		2   99   0  18 TinyBell
+		2   99   0  35 RndGlock
+		2   99   0  40 GlockChi
+		2   99   0  41 ClearBel
+		2   99   0  42 ChorBell
+		2   99   0  64 SynMalet
+		2   99   0  65 SftCryst
+		2   99   0  66 LoudGlok
+		2   99   0  67 XmasBell
+		2   99   0  68 VibeBell
+		2   99   0  69 DigiBell
+		2   99   0  70 AirBells
+		2   99   0  71 BellHarp
+		2   99   0  72 Gamelmba
+		0  100         FX 4 (atmosphere)/Atmosphere
+		1a 100   1     Warm Atmos
+		1a 100   2     Nylon Harp
+		1a 100   3     Harpvox
+		1a 100   4     HollowReleas
+		1a 100   5     Nylon+Rhodes
+		1a 100   6     Ambient Pad
+		1b 100 127     Syn Mallet
+		2  100   0  18 WarmAtms
+		2  100   0  19 HollwRls
+		2  100   0  40 NylonEP
+		2  100   0  64 NylnHarp
+		2  100   0  65 Harp Vox
+		2  100   0  66 AtmosPad
+		2  100   0  67 Planet
+		0  101         FX 5 (brightness)/Brightness
+		1b 101 127     Windbell
+		2  101   0  64 FantaBel
+		2  101   0  96 Smokey
+		0  102         FX 6 (goblins)/Goblin
+		1a 102   1     Goblinson
+		1a 102   2     50's Sci-Fi
+		1b 102 127     Glock
+		2  102   0  64 GobSyn
+		2  102   0  65 50sSciFi
+		2  102   0  66 Ring Pad
+		2  102   0  67 Ritual
+		2  102   0  68 ToHeaven
+		2  102   0  70 Night
+		2  102   0  71 Glisten
+		2  102   0  96 BelChoir
+		0  103         FX 7 (echoes)/Echo Drops
+		1  103   1     Echo Bell
+		1  103   2     Echo Pan
+		1a 103   3     Echo Pan 2
+		1a 103   4     Big Panner
+		1a 103   5     Reso Panner
+		1a 103   6     Water Piano
+		1b 103 127     Tube Bell
+		2  103   0   8 EchoPad2
+		2  103   0  14 Echo Pan
+		2  103   0  64 EchoBell
+		2  103   0  65 Big Pan
+		2  103   0  66 SynPiano
+		2  103   0  67 Creation
+		2  103   0  68 Stardust
+		2  103   0  69 Reso Pan
+		0  104         FX 8 (sci-fi)/Star Theme
+		1a 104   1     Star Theme 2
+		1b 104 127     Xylophone
+		2  104   0  64 Starz
+
+		# ETHNIC
+		0  105         Sitar
+		1  105   1     Sitar 2
+		1a 105   2     Detune Sitar
+		1a 105   8     Tambra
+		1a 105  16     Tamboura
+		1b 105 127     Marimba
+		2  105   0  32 DetSitar
+		2  105   0  35 Sitar 2
+		2  105   0  96 Tambra
+		2  105   0  97 Tamboura
+		0  106         Banjo
+		1a 106   1     Muted Banjo
+		1a 106   8     Rabab
+		1a 106  16     Gopichant
+		1a 106  24     Oud
+		1b 106 127     Koto
+		2  106   0  28 MuteBnjo
+		2  106   0  96 Rabab
+		2  106   0  97 Gopichnt
+		2  106   0  98 Oud
+		0  107         Shamisen
+		1a 107   1     Tsugaru
+		1b 107 127     Sho
+		0  108         Koto
+		1  108   8     Taisho Koto
+		1a 108  16     Kanoon
+		1b 108 127     Shakuhachi
+		2  108   0  96 T.Koto
+		2  108   0  97 Kanoon
+		0  109         Kalimba
+		1b 109 127     Whistle 1
+		0  110         Bagpipe
+		1b 110 127     Whistle 2
+		0  111         Fiddle
+		1b 111 127     Bottleblow
+		0  112         Shanai
+		1a 112   1     Shanai 2
+		1a 112   8     Pungi
+		1a 112  16     Hichiriki
+		1b 112 127     Breathpipe
+		2  112   0  64 Shanai2
+		2  112   0  96 Pungi
+		2  112   0  97 Hichriki
+
+		# PERCUSSIVE
+		0  113         Tinkle Bell
+		1a 113   8     Bonang
+		1a 113   9     Gender
+		1a 113  10     Gamelan Gong
+		1a 113  11     St.Gamelan
+		1a 113  16     RAMA Cymbal
+		1b 113 127     Timpani
+		2  113   0  96 Bonang
+		2  113   0  97 Gender
+		2  113   0  98 Gamelan
+		2  113   0  99 S.Gamlan
+		2  113   0 100 Rama Cym
+		2  113   0 101 AsianBel
+		0  114         Agogo
+		1a 114   8     Atarigane
+		1b 114 127     Melodic Tom
+		0  115         Steel Drums
+		1b 115 127     Deep Snare
+		2  115   0  97 GlasPerc
+		2  115   0  98 ThaiBell
+		0  116         Woodblock
+		1  116   8     Castanets
+		1b 116 127     Elec Perc 1
+		2  116   0  96 Castanets
+		0  117         Taiko Drum
+		1  117   8     Concert Bass Drum
+		1b 117 127     Elec Perc 2
+		2  117   0  96 Gr.Cassa
+		0  118         Melodic Tom
+		1a 118   1     Real Tom
+		1  118   8     Melo. Tom 2
+		1a 118   9     Rock Tom
+		1b 118 127     Taiko
+		2  118   0  64 Mel Tom2
+		2  118   0  65 Real Tom
+		2  118   0  66 Rock Tom
+		0  119         Synth Drum
+		1  119   8     808 Tom
+		1  119   9     Elec Perc
+		1b 119 127     Taiko Rim
+		2  119   0  64 Ana Tom
+		2  119   0  65 ElecPerc
+		0  120         Reverse Cymbals
+		1a 120   1     Reverse Cym2
+		1a 120   8     Rev.Snare 1
+		1a 120   9     Rev.Snare 2
+		1a 120  16     Rev.Kick 1
+		1a 120  17     Rev.ConBD
+		1a 120  24     Rev.Tom 1
+		1a 120  25     Rev.Tom 2
+		1b 120 127     Cymbal
+
+		# SOUND EFFECTS
+		0  121         Guitar Fret Noise
+		1  121   1     Gt. Cut Noise
+		1  121   2     String Slap
+		1a 121   3     Gt.CutNoise2
+		1a 121   4     Dist.CutNoise
+		1a 121   5     Bass Slide
+		1a 121   6     Pick Scrape
+		1b 121 127     Castanets
+		0  122         Breath Noise
+		1  122   1     Flute Key Click
+		1b 122 127     Triangle
+		0  123         Seashore
+		1  123   1     Rain
+		1  123   2     Thunder
+		1  123   3     Wind
+		1  123   4     Stream
+		1  123   5     Bubble
+		1b 123 127     Orche Hit
+		0  124         Bird Tweet
+		1  124   1     Dog
+		1  124   2     Horse-Gallop
+		1  124   3     Bird 2
+		1a 124   4     Kitty
+		1a 124   5     Growl
+		1b 124 127     Telephone
+		0  125         Telephone Ring
+		1  125   1     Telephone 2
+		1  125   2     Door Creaking
+		1  125   3     Door Close
+		1  125   4     Scratch
+		1  125   5     Windchime
+		1a 125   7     Scratch 2
+		1b 125 127     Bird Tweet
+		0  126         Helicopter
+		1  126   1     Car-Engine
+		1  126   2     Car-Stop
+		1  126   3     Car-Pass
+		1  126   4     Car-Crash
+		1  126   5     Siren
+		1  126   6     Train
+		1  126   7     Jetplane
+		1  126   8     Starship
+		1  126   9     Burst Noise
+		1b 126 127     One Note Jam
+		0  127         Applause
+		1  127   1     Laughing
+		1  127   2     Screaming
+		1  127   3     Punch
+		1  127   4     Heart Beat
+		1  127   5     Footsteps
+		1a 127   6     Applause 2
+		1b 127 127     Water Bell
+		0  128         Gun Shot
+		1  128   1     Machine Gun
+		1  128   2     Lasergun
+		1  128   3     Explosion
+		1b 128 127     Jungle Tune
+	</code>
+</body>
+
+</html>
