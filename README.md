@@ -1,9 +1,10 @@
 
-**@LenweSaralonde** on [GitHub](https://github.com/LenweSaralonde) / [Twitter](https://twitter.com/LenweSaralonde) / [Twitch](https://twitch.tv/LenweSaralonde) / [YouTube](https://youtube.com/LenweSaralonde) / [Instagram](https://instagram.com/LenweSaralonde) / <a rel="me" href="https://mastouille.fr/@LenweSaralonde">Mastodon</a>
+**@LenweSaralonde** on [GitHub](https://github.com/LenweSaralonde) / [Twitter](https://twitter.com/LenweSaralonde) / [Bluesky](https://bsky.app/profile/lenwesaralonde.bsky.social) / [Twitch](https://twitch.tv/LenweSaralonde) / [YouTube](https://youtube.com/LenweSaralonde) / [Instagram](https://instagram.com/LenweSaralonde) / <a rel="me" href="https://mastouille.fr/@LenweSaralonde">Mastodon</a>
 
 **Table of contents**
 * [Musician](#musician--musicianlenweio)
 * [Adaptive controller for World of Warcraft](#adaptive-controller-for-world-of-warcraft)
+* [8-port MIDI merger](#8-port-midi-merger)
 * [Other add-ons for World of Warcraft](#other-add-ons-for-world-of-warcraft)
 
 # Musician – [musician.lenwe.io](https://musician.lenwe.io)
@@ -26,8 +27,10 @@ Music can be played from MIDI files, using the computer keyboard or a MIDI contr
 
 ## Plugins
 In addition to the main main add-on and some plugins to provide additional features.
+* **Musician Extended** ([GitHub](https://github.com/LenweSaralonde/MusicianExtended) / [CurseForge](https://www.curseforge.com/wow/addons/musicianextended)): Add more instruments to Musician.
 * **Musician List** ([GitHub](https://github.com/LenweSaralonde/MusicianList) / [CurseForge](https://www.curseforge.com/wow/addons/musicianlist)): Save and load songs in-game.
 * **Musician MIDI** ([GitHub](https://github.com/LenweSaralonde/MusicianMIDI) / [CurseForge](https://www.curseforge.com/wow/addons/musicianmidi)): Play live music using a MIDI keyboard.
+* **Musician EZK** ([GitHub](https://github.com/LenweSaralonde/MusicianEZK) / [CurseForge](https://www.curseforge.com/wow/addons/musicianezk)): Play live using Guild Wars 2 simplified key bindings.
 
 # Adaptive controller for World of Warcraft
 
@@ -38,6 +41,14 @@ The core of the project is a [Makey Makey](https://makeymakey.com/) card, a chea
 More information in the video description. Enable CC for english subtitles.
 
 <div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/KrIIDFBODwA" title="Adaptive controller for World of Warcraft video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+
+# 8-port MIDI merger
+
+Very simple open source low cost DIY MIDI merger that allows to connect up to 8 MIDI controllers to a single instrument. It was initially designed for [LOOK MUM NO COMPUTER](https://www.youtube.com/LOOKMUMNOCOMPUTER)'s pipe organ project and serves as an alternative to commercial products that are usually very expensive and can't receive software updates.
+
+It's made of a Raspberry Pi Pico and a few off-the-shelf components. The code is written in C++.
+
+* GitHub repository: [https://github.com/LenweSaralonde/pico-midi-merger](https://github.com/LenweSaralonde/pico-midi-merger)
 
 # Other add-ons for World of Warcraft
 
