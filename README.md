@@ -1,5 +1,5 @@
 
-**@LenweSaralonde** on [GitHub](https://github.com/LenweSaralonde) / [Twitter](https://twitter.com/LenweSaralonde) / [Bluesky](https://bsky.app/profile/lenwesaralonde.bsky.social) / [Twitch](https://twitch.tv/LenweSaralonde) / [YouTube](https://youtube.com/LenweSaralonde) / [Instagram](https://instagram.com/LenweSaralonde) / <a rel="me" href="https://mastouille.fr/@LenweSaralonde">Mastodon</a>
+**@LenweSaralonde** on [GitHub](https://github.com/LenweSaralonde) / [Twitter](https://twitter.com/LenweSaralonde) / [Bluesky](https://bsky.app/profile/lenwe.io) / [Twitch](https://twitch.tv/LenweSaralonde) / [YouTube](https://youtube.com/LenweSaralonde) / [Instagram](https://instagram.com/LenweSaralonde) / <a rel="me" href="https://mastouille.fr/@LenweSaralonde">Mastodon</a>
 
 **Table of contents**
 * [Musician](#musician--musicianlenweio)
