@@ -113,7 +113,7 @@
 			return String.fromCharCode((26 + num) % 26 + charA);
 		}
 
-		function vigenereDecode(word, key, sign = -1) {
+		function vigenereDecode(word, key, mul = 1) {
 			if (key === '') {
 				return word;
 			}
@@ -123,15 +123,11 @@
 				if (word[i] === ' ') {
 					decoded += ' ';
 				} else {
-					decoded += getLetterFromNum(getLetterNumAt(word, i) + sign * getLetterNumAt(key, keyPos % key.length));
+					decoded += getLetterFromNum(getLetterNumAt(word, i) - mul * getLetterNumAt(key, keyPos % key.length));
 					keyPos++;
 				}
 			}
 			return decoded;
-		}
-
-		function vigenereEncode(word, key) {
-			return vigenereDecode(word, key, 1);
 		}
 
 		function rotate(word, amount, sign = -1) {
@@ -154,12 +150,7 @@
 			const vig = +document.getElementById('vigenere').value;
 			const rot = +document.getElementById('rotate').value;
 
-			let decoded = word;
-			if (vig !== 0) {
-				for (let i = 0; i < Math.abs(vig); i++) {
-					decoded = vigenereDecode(decoded, key, (vig < 0) ? 1 : -1);
-				}
-			}
+			let decoded = vigenereDecode(word, key, vig);
 			decoded = rotate(decoded, rot);
 
 			return decoded;
@@ -297,11 +288,14 @@
 		<h1>9 o'clock cipher puzzle tester</h1>
 		<p style="font-size: .9em">
 			This simple tool aims to help solving the 9 o'clock step of the infamous
-			<a href="https://warcraft.wiki.gg/wiki/Keys_to_Incognitro,_the_Indecipherable_Felcycle#9_o'clock:_Vault" target="_blank" rel="noreferrer nofollow">Incognitro Azeroth secret</a>.<br>
+			<a href="https://warcraft.wiki.gg/wiki/Keys_to_Incognitro,_the_Indecipherable_Felcycle#9_o'clock:_Vault"
+				target="_blank" rel="noreferrer nofollow">Incognitro Azeroth secret</a>.<br>
 			The theory is this cipher on the cryptic plaque is the key to unlock Ratts' console in Azj-Kahet.<br>
 			Even if the cipher is localized, the end result should be the same regardless of the language.<br>
 			Josh confirmed that the puzzle works in English and in French.<br></br>
-			For any suggestion or question, feel free to contact me on Discord <a href="https://discordapp.com/users/155422574409547776" target="_blank" rel="noreferrer nofollow">@LenweSaralonde</a>.
+			For any suggestion or question, feel free to contact me on Discord <a
+				href="https://discordapp.com/users/155422574409547776" target="_blank"
+				rel="noreferrer nofollow">@LenweSaralonde</a>.
 		</p>
 		<table>
 			<thead>
