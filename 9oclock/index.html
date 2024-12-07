@@ -9,6 +9,15 @@
 		body {
 			font-family: Arial, sans-serif;
 			margin: 20px;
+			color: #CCC;
+			background-color: #222;
+		}
+
+		input {
+			color: #CCC;
+			background-color: #333;
+			border: none;
+			font-size: 1.2em;
 		}
 
 		form {
@@ -22,6 +31,10 @@
 			width: 100%
 		}
 
+		a {
+			color: #FFFFFF
+		}
+
 		th,
 		td {
 			border: 1px solid #ddd;
@@ -30,7 +43,8 @@
 		}
 
 		th {
-			background-color: #f4f4f4;
+			background-color: #333;
+			text-align: center;
 		}
 
 		label {
@@ -59,6 +73,7 @@
 			width: 290px;
 			text-align: center;
 			display: inline-block;
+			font-weight: bold;
 		}
 	</style>
 	<script>
@@ -143,7 +158,14 @@
 		}
 
 		function arrayToString(arr) {
-			return arr.join(' ');
+			let str = '';
+			for (let i = 0; i < arr.length; i++) {
+				if (i > 0 && i % 3 === 0) {
+					str += ' ';
+				}
+				str += arr[i];
+			}
+			return str;
 		}
 
 		function calculateInput(word, key) {
@@ -180,6 +202,22 @@
 			return result;
 		}
 
+		function toBitCount(text, add = 0) {
+			const result = [];
+			for (let i = 0; i < text.length; i++) {
+				let count = 0;
+				let bit = 0x01;
+				for (b = 0; b < 8; b++) {
+					if ((((text.charCodeAt(i) + add) % 0x100) & bit) > 0) {
+						count++;
+					}
+					bit <<= 1;
+				}
+				result.push(count);
+			}
+			return result;
+		}
+
 		function calculate() {
 			const inputEnglish = normalize(document.getElementById('input-english').value);
 			const inputFrench = normalize(document.getElementById('input-french').value);
@@ -192,90 +230,62 @@
 			let resultEnglish = '';
 			let resultFrench = '';
 
+			const appendTitle = function (title) {
+				resultEnglish += "<b>" + title + "</b>\n";
+				resultFrench += "<b>" + title + "</b>\n";
+			}
+
+			const appendResult = function (valueEnglish, valueFrench) {
+				resultEnglish += valueEnglish + "\n";
+				resultFrench += valueFrench + "\n";
+				if (valueEnglish === valueFrench) {
+					const equal = '<span class="equal">EQUAL!</span>';
+					resultEnglish += equal + "\n";
+					resultFrench += equal + "\n";
+				}
+				resultEnglish += "\n";
+				resultFrench += "\n";
+			}
+
 			const decodedVigEnglish = swap ? calculateInput(KEY_ENGLISH, english) : calculateInput(english, KEY_ENGLISH);
 			const decodedVigFrench = swap ? calculateInput(KEY_FRENCH, french) : calculateInput(french, KEY_FRENCH);
-			resultEnglish += "Decoded:\n";
-			resultFrench += "Decoded:\n";
-			resultEnglish += decodedVigEnglish + "\n";
-			resultFrench += decodedVigFrench + "\n";
-			if (decodedVigEnglish === decodedVigFrench) {
-				const equal = '<span class="equal">EQUAL!</span>';
-				resultEnglish += equal + "\n";
-				resultFrench += equal + "\n";
-			}
-			resultEnglish += "\n";
-			resultFrench += "\n";
+			appendTitle(`Deciphered text`);
+			appendResult(decodedVigEnglish, decodedVigFrench);
 
 			const asciiEnglish10 = arrayToString(toASCII(decodedVigEnglish, 10));
 			const asciiFrench10 = arrayToString(toASCII(decodedVigFrench, 10));
-			resultEnglish += "ASCII char modulo 10:\n";
-			resultFrench += "ASCII char modulo 10:\n";
-			resultEnglish += asciiEnglish10 + "\n";
-			resultFrench += asciiFrench10 + "\n";
-			if (asciiEnglish10 === asciiFrench10) {
-				const equal = '<span class="equal">EQUAL!</span>';
-				resultEnglish += equal + "\n";
-				resultFrench += equal + "\n";
-			}
-			resultEnglish += "\n";
-			resultFrench += "\n";
-
-			const asciiEnglish17 = arrayToString(toASCII(decodedVigEnglish, 17));
-			const asciiFrench17 = arrayToString(toASCII(decodedVigFrench, 17));
-			resultEnglish += "ASCII char modulo 17:\n";
-			resultFrench += "ASCII char modulo 17:\n";
-			resultEnglish += asciiEnglish17 + "\n";
-			resultFrench += asciiFrench17 + "\n";
-			if (asciiEnglish17 === asciiFrench17) {
-				const equal = '<span class="equal">EQUAL!</span>';
-				resultEnglish += equal + "\n";
-				resultFrench += equal + "\n";
-			}
-			resultEnglish += "\n";
-			resultFrench += "\n";
+			appendTitle("ASCII char % 10");
+			appendResult(asciiEnglish10, asciiFrench10);
 
 			const letterEnglish10 = arrayToString(toLetter(decodedVigEnglish, 10));
 			const letterFrench10 = arrayToString(toLetter(decodedVigFrench, 10));
-			resultEnglish += "Letter modulo 10:\n";
-			resultFrench += "Letter modulo 10:\n";
-			resultEnglish += letterEnglish10 + "\n";
-			resultFrench += letterFrench10 + "\n";
-			if (letterEnglish10 === letterFrench10) {
-				const equal = '<span class="equal">EQUAL!</span>';
-				resultEnglish += equal + "\n";
-				resultFrench += equal + "\n";
-			}
-			resultEnglish += "\n";
-			resultFrench += "\n";
+			appendTitle("Letter number % 10");
+			appendResult(letterEnglish10, letterFrench10);
+
+			const bitsEnglish = arrayToString(toBitCount(decodedVigEnglish));
+			const bitsFrench = arrayToString(toBitCount(decodedVigFrench));
+			appendTitle("Number of 1 in binary ASCII char");
+			appendResult(bitsEnglish, bitsFrench);
+
+			const asciiEnglish17 = arrayToString(toASCII(decodedVigEnglish, 17));
+			const asciiFrench17 = arrayToString(toASCII(decodedVigFrench, 17));
+			appendTitle("ASCII char % 17 % 10");
+			appendResult(asciiEnglish17, asciiFrench17);
 
 			const letterEnglish17 = arrayToString(toLetter(decodedVigEnglish, 17));
 			const letterFrench17 = arrayToString(toLetter(decodedVigFrench, 17));
-			resultEnglish += "Letter modulo 17:\n";
-			resultFrench += "Letter modulo 17:\n";
-			resultEnglish += letterEnglish17 + "\n";
-			resultFrench += letterFrench17 + "\n";
-			if (letterEnglish17 === letterFrench17) {
-				const equal = '<span class="equal">EQUAL!</span>';
-				resultEnglish += equal + "\n";
-				resultFrench += equal + "\n";
-			}
-			resultEnglish += "\n";
-			resultFrench += "\n";
+			appendTitle("Letter number % 17 % 10");
+			appendResult(letterEnglish17, letterFrench17);
 
+			const bitsEnglish17 = arrayToString(toBitCount(decodedVigEnglish, 17));
+			const bitsFrench17 = arrayToString(toBitCount(decodedVigFrench, 17));
+			appendTitle("Number of 1 in binary ASCII char + 17");
+			appendResult(bitsEnglish, bitsFrench);
 
 			const phoneEnglish = arrayToString(toPhoneDigits(decodedVigEnglish));
 			const phoneFrench = arrayToString(toPhoneDigits(decodedVigFrench));
-			resultEnglish += "Phone key digit:\n";
-			resultFrench += "Phone key digit:\n";
-			resultEnglish += phoneEnglish + "\n";
-			resultFrench += phoneFrench + "\n";
-			if (phoneEnglish === phoneFrench) {
-				const equal = '<span class="equal">EQUAL!</span>';
-				resultEnglish += equal + "\n";
-				resultFrench += equal + "\n";
-			}
-			resultEnglish += "\n";
-			resultFrench += "\n";
+			appendTitle("Phone key digit");
+			appendResult(phoneEnglish, phoneFrench);
 
 			document.getElementById('result-english').innerHTML = inputEnglish !== '' ? resultEnglish : '';
 			document.getElementById('result-french').innerHTML = inputFrench !== '' ? resultFrench : '';
@@ -295,7 +305,10 @@
 			Josh confirmed that the puzzle works in English and in French.<br></br>
 			For any suggestion or question, feel free to contact me on Discord <a
 				href="https://discordapp.com/users/155422574409547776" target="_blank"
-				rel="noreferrer nofollow">@LenweSaralonde</a>.
+				rel="noreferrer nofollow">@LenweSaralonde</a>.<br><br>
+			Check my <a
+				href="https://docs.google.com/document/d/1kEHN_D81h7U5dyL2apMkd3eDKj74SeMtg6PFX2Ob0C0/edit?usp=sharing"
+				target="_blank" rel="noreferrer nofollow">notes on the 9 o'clock puzzle</a>.
 		</p>
 		<table>
 			<thead>
