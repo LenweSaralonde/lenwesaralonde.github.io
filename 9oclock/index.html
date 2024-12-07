@@ -236,9 +236,9 @@
 			}
 
 			const appendResult = function (valueEnglish, valueFrench) {
-				resultEnglish += valueEnglish + "\n";
-				resultFrench += valueFrench + "\n";
-				if (valueEnglish === valueFrench) {
+				resultEnglish += (valueEnglish || '- - -') + "\n";
+				resultFrench += (valueFrench || '- - -')  + "\n";
+				if (valueEnglish && valueFrench && valueEnglish === valueFrench) {
 					const equal = '<span class="equal">EQUAL!</span>';
 					resultEnglish += equal + "\n";
 					resultFrench += equal + "\n";
@@ -287,13 +287,13 @@
 			appendTitle("Phone key digit");
 			appendResult(phoneEnglish, phoneFrench);
 
-			document.getElementById('result-english').innerHTML = inputEnglish !== '' ? resultEnglish : '';
-			document.getElementById('result-french').innerHTML = inputFrench !== '' ? resultFrench : '';
+			document.getElementById('result-english').innerHTML = resultEnglish;
+			document.getElementById('result-french').innerHTML = resultFrench;
 		}
 	</script>
 </head>
 
-<body>
+<body onload="calculate()">
 	<form>
 		<h1>9 o'clock cipher puzzle tester</h1>
 		<p style="font-size: .9em">
