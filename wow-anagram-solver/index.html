@@ -90,7 +90,9 @@
 			const wordsMap = new Map();
 			SOURCE_TEXT
 				.split('\n')
-				.map(normalize).forEach((word) => wordsMap.set(word, word));
+				.map(normalize)
+				.sort()
+				.forEach((word) => wordsMap.set(word, word));
 
 			// Group words by length
 			wordsMap.forEach((word) => {
@@ -103,6 +105,7 @@
 
 			// Loading complete
 			IS_LOADED = true;
+			document.getElementById('solveButton').value = "Solve";
 			document.getElementById('solveButton').disabled = false;
 		}
 
@@ -125,20 +128,51 @@
 
 		function solve(event) {
 			event.preventDefault();
-			const letters = normalize(document.getElementById('letters').value).replace(/[^A-Z]+/g, '');
-			const results = [];
 
-			// Solve single word (exact)
-			const words = WORDS_BY_LENGTH.get(letters.length) || [];
-			for (let i = 0; i < words.length; i++) {
-				const word = words[i];
-				const match = lettersMatch(word, letters);
-				if (match !== false && match.length === 0) {
-					results.push(word);
-				}
+			normalizeInput();
+
+			const fullWordsOnly = document.getElementById('fullword').checked;
+			const mostCommonOnly = document.getElementById('mostcommon').checked;
+
+			const wordsByLength = new Map(WORDS_BY_LENGTH);
+			if (mostCommonOnly) {
+				wordsByLength.set(1, (['A', 'I', 'S']));
+				wordsByLength.set(2, (['DO', 'IF', 'IS', 'AS', 'AT', 'BY', 'IN', 'OF', 'UP', 'US', 'HE', 'IT', 'NO', 'OR', 'TO', 'WE', 'AM', 'AD']));
+				wordsByLength.set(3, (['THE', 'AND', 'FOR', 'ARE', 'BUT', 'NOT', 'YOU', 'ALL', 'ANY', 'CAN', 'HAD', 'HER', 'WAS', 'ONE', 'OUR', 'OUT', 'DAY', 'GET', 'HAS', 'HIM', 'HIS', 'HOW', 'MAN', 'NEW', 'NOW', 'OLD', 'SEE', 'TWO', 'WAY', 'WHO', 'BOY', 'DID', 'ITS', 'LET', 'PUT', 'SAY', 'SHE', 'TOO', 'USE', 'SIX', 'TEN']));
 			}
 
-			document.getElementById('result').innerHTML = results.join("\n");
+			const resolveSingle = (letters) => {
+				const results = new Set();
+				for (let length = letters.length; length > 0; length--) {
+					const words = wordsByLength.get(length) || [];
+					for (let i = 0; i < words.length; i++) {
+						const word = words[i];
+						const match = lettersMatch(word, letters);
+						if (match !== false && match.length === (letters.length - length)) {
+							if (letters.length === length) {
+								results.add(word);
+							} else if (!fullWordsOnly) {
+								resolveSingle(match).forEach((word2) => results.add(`${word} ${word2}`.split(' ').sort().join(' ')))
+							}
+						}
+					}
+					if (fullWordsOnly) {
+						break;
+					}
+				}
+				return results;
+			}
+
+			document.getElementById('solveButton').value = "Solving...";
+			document.getElementById('result').innerHTML = "Please wait...";
+			document.getElementById('solveButton').disabled = true;
+
+			setTimeout(() => requestAnimationFrame(() => {
+				const letters = normalize(document.getElementById('letters').value).replace(/[^A-Z]+/g, '');
+				document.getElementById('result').innerHTML = [...resolveSingle(letters)].join("\n") || "No result ;(";
+				document.getElementById('solveButton').value = "Solve";
+				document.getElementById('solveButton').disabled = false;
+			}), 0);
 
 			return false;
 		}
@@ -150,7 +184,15 @@
 	<form onsubmit="return solve(event)">
 		<h1>WoW anagram solver</h1>
 		<p style="font-size: .9em">
-			Anagram solver for World of Warcraft.
+			Anagram solver for World of Warcraft.<br><br>
+			⚠️ A large number of combinations may result and freeze the page. ⚠️<br><br>
+			Check out the <a href="../9oclock" target="_blank">9 o'clock cipher puzzle tester</a>.<br><br>
+			For any suggestion or question, feel free to contact me on Discord <a
+				href="https://discordapp.com/users/155422574409547776" target="_blank"
+				rel="noreferrer nofollow">@LenweSaralonde</a>.<br><br>
+			Check my <a
+				href="https://docs.google.com/document/d/1kEHN_D81h7U5dyL2apMkd3eDKj74SeMtg6PFX2Ob0C0/edit?usp=sharing"
+				target="_blank" rel="noreferrer nofollow">notes on the 9 o'clock puzzle</a>.
 		</p>
 		<table>
 			<thead>
@@ -160,12 +202,23 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td style="text-align: center"><input type="text" name="letters" id="letters" class="bigField"
-							maxlength="40" onkeyup="normalizeInput()" onchange="normalizeInput()"><br><input
-							id="solveButton" type="submit" value="Solve" disabled></td>
+					<td style="text-align: center">
+						<input type="text" name="letters" id="letters" class="bigField" maxlength="40"
+							placeholder="Enter letters here..."><br>
+						<div style="text-align: left">
+							<label style="white-space: nowrap; width: auto"><input type="checkbox" name="fullword"
+									id="fullword" checked> Full words only <i>(unchecking this may freeze the page while
+									solving)</i></label><br>
+							<label style="white-space: nowrap; width: auto"><input type="checkbox" name="mostcommon"
+									id="mostcommon"> Use most common words only <i>(recommended if searching for
+									multiple words)</i></label><br>
+						</div>
+						<br><input id="solveButton" type="submit" value="Loading..." disabled
+							style="padding: 15px; width: 200px">
+					</td>
 				</tr>
 				<tr class="result">
-					<td id="result"></td>
+					<td id="result">- - -</td>
 				</tr>
 			</tbody>
 		</table>
