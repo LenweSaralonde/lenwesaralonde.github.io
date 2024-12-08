@@ -237,7 +237,7 @@
 
 			const appendResult = function (valueEnglish, valueFrench) {
 				resultEnglish += (valueEnglish || '- - -') + "\n";
-				resultFrench += (valueFrench || '- - -')  + "\n";
+				resultFrench += (valueFrench || '- - -') + "\n";
 				if (valueEnglish && valueFrench && valueEnglish === valueFrench) {
 					const equal = '<span class="equal">EQUAL!</span>';
 					resultEnglish += equal + "\n";
@@ -247,9 +247,15 @@
 				resultFrench += "\n";
 			}
 
+			const appendComment = function (commentEnglish = '', commentFrench = '') {
+				resultEnglish += commentEnglish + "\n";
+				resultFrench += commentFrench + "\n";
+			}
+
 			const decodedVigEnglish = swap ? calculateInput(KEY_ENGLISH, english) : calculateInput(english, KEY_ENGLISH);
 			const decodedVigFrench = swap ? calculateInput(KEY_FRENCH, french) : calculateInput(french, KEY_FRENCH);
-			appendTitle(`Deciphered text`);
+			resultEnglish += `Deciphered text &nbsp; <i style="font-size: 0.9em"><a href="../wow-anagram-solver" target="_blank">Open Anagram Solver</a></i>\n`;
+			resultFrench += `Deciphered text\n`;
 			appendResult(decodedVigEnglish, decodedVigFrench);
 
 			const asciiEnglish10 = arrayToString(toASCII(decodedVigEnglish, 10));
@@ -303,6 +309,8 @@
 			The theory is this cipher on the cryptic plaque is the key to unlock Ratts' console in Azj-Kahet.<br>
 			Even if the cipher is localized, the end result should be the same regardless of the language.<br>
 			Josh confirmed that the puzzle works in English and in French.<br></br>
+			Check out the <a href="../wow-anagram-solver" target="_blank">Anagram Solver for World of Warcraft</a> to
+			find anagrams from the deciphered text.<br><br>
 			For any suggestion or question, feel free to contact me on Discord <a
 				href="https://discordapp.com/users/155422574409547776" target="_blank"
 				rel="noreferrer nofollow">@LenweSaralonde</a>.<br><br>
@@ -320,9 +328,11 @@
 			<tbody>
 				<tr>
 					<td><input type="text" name="input-english" id="input-english" class="bigField" maxlength="20"
-							onkeyup="calculate()" onchange="calculate()"></td>
+							onkeyup="calculate()" onchange="calculate()" placeholder="Enter English text to decrypt...">
+					</td>
 					<td><input type="text" name="input-french" id="input-french" class="bigField" maxlength="20"
-							onkeyup="calculate()" onchange="calculate()"></td>
+							onkeyup="calculate()" onchange="calculate()" placeholder="Enter French text to decrypt...">
+					</td>
 				</tr>
 				<tr>
 					<td colspan="2">
@@ -332,8 +342,8 @@
 						</div><br>
 						<label for="vigenere">Vigenere</label>
 						× <input type="number" id="vigenere" name="vigenere" step="1" style="width: 50px" value="1"
-							onkeyup="calculate()" onchange="calculate()"> <i>Use negative value to encode instead of
-							decoding.</i><br><br>
+							onkeyup="calculate()" onchange="calculate()"> <i style="font-size: 0.9em">Use a negative value to encode instead of
+							decoding, 0 to disable.</i><br><br>
 						<label for="rotate">Rotate</label>
 						× <input type="number" id="rotate" name="rotate" step="1" style="width: 50px" value="0"
 							onkeyup="calculate()" onchange="calculate()"><br><br>
