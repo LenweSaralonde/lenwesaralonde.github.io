@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>WoW anagram solver</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			margin: 20px;
+			color: #CCC;
+			background-color: #222;
+		}
+
+		input {
+			color: #CCC;
+			background-color: #333;
+			border: none;
+			font-size: 1.2em;
+		}
+
+		form {
+			margin: auto;
+			width: 640px;
+		}
+
+		table {
+			border-collapse: collapse;
+			margin-bottom: 20px;
+			width: 100%
+		}
+
+		a {
+			color: #FFFFFF
+		}
+
+		th,
+		td {
+			border: 1px solid #ddd;
+			padding: 10px;
+			text-align: left;
+		}
+
+		th {
+			background-color: #333;
+			text-align: center;
+		}
+
+		label {
+			display: inline-block;
+			width: 100px;
+		}
+
+		.bigField {
+			width: 490px;
+			margin: auto;
+			display: block;
+		}
+
+		.result {
+			white-space: pre-wrap;
+			text-align: left;
+		}
+
+		.result td {
+			max-width: 50%;
+		}
+	</style>
+	<script>
+		function normalize(text) {
+			return text
+				.normalize("NFD")
+				.replace(/[\u0300-\u036f]/g, "")
+				.toUpperCase()
+				.replace(/[^A-Z]+/g, ' ')
+				.replace(/\s+/g, ' ')
+				.trim();
+		}
+
+		function normalizeInput() {
+			const input = document.getElementById('letters');
+			input.value = normalize(input.value)
+		}
+
+		let SOURCE_TEXT = '';
+		let IS_LOADED = false;
+		let WORDS_BY_LENGTH = new Map();
+		function load() {
+			const wordsMap = new Map();
+			SOURCE_TEXT
+				.split('\n')
+				.map(normalize).forEach((word) => wordsMap.set(word, word));
+
+			// Group words by length
+			wordsMap.forEach((word) => {
+				const length = word.replace(/\s+/g, '').length;
+				if (!WORDS_BY_LENGTH.has(length)) {
+					WORDS_BY_LENGTH.set(length, []);
+				}
+				WORDS_BY_LENGTH.get(length).push(word);
+			});
+
+			// Loading complete
+			IS_LOADED = true;
+			document.getElementById('solveButton').disabled = false;
+		}
+
+		// Returns false if no match, array of leftover letters otherwise
+		function lettersMatch(word, letters) {
+			const leftoverLetters = [...letters];
+			for (let i = 0; i < word.length; i++) {
+				const letter = word[i];
+				if (letter === ' ') {
+					continue;
+				}
+				const letterIndex = leftoverLetters.indexOf(word[i]);
+				if (letterIndex === -1) {
+					return false;
+				}
+				leftoverLetters.splice(letterIndex, 1);
+			}
+			return leftoverLetters;
+		}
+
+		function solve(event) {
+			event.preventDefault();
+			const letters = normalize(document.getElementById('letters').value).replace(/[^A-Z]+/g, '');
+			const results = [];
+
+			// Solve single word (exact)
+			const words = WORDS_BY_LENGTH.get(letters.length) || [];
+			for (let i = 0; i < words.length; i++) {
+				const word = words[i];
+				const match = lettersMatch(word, letters);
+				if (match !== false && match.length === 0) {
+					results.push(word);
+				}
+			}
+
+			document.getElementById('result').innerHTML = results.join("\n");
+
+			return false;
+		}
+
+	</script>
+</head>
+
+<body>
+	<form onsubmit="return solve(event)">
+		<h1>WoW anagram solver</h1>
+		<p style="font-size: .9em">
+			Anagram solver for World of Warcraft.
+		</p>
+		<table>
+			<thead>
+				<tr>
+					<th>Letters input</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td style="text-align: center"><input type="text" name="letters" id="letters" class="bigField"
+							maxlength="40" onkeyup="normalizeInput()" onchange="normalizeInput()"><br><input
+							id="solveButton" type="submit" value="Solve" disabled></td>
+				</tr>
+				<tr class="result">
+					<td id="result"></td>
+				</tr>
+			</tbody>
+		</table>
+	</form>
+	<script src="words.js"></script>
+	<script>load();</script>
+</body>
+
+</html>
