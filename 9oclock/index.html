@@ -151,7 +151,7 @@
 				if (word[i] === ' ') {
 					decoded += ' ';
 				} else {
-					decoded += getLetterFromNum(getLetterNumAt(word, i) + sign * amount);
+					decoded += getLetterFromNum((getLetterNumAt(word, i) + sign * amount) % 26);
 				}
 			}
 			return decoded;
