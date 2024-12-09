@@ -65,6 +65,7 @@
 
 		.result td {
 			max-width: 50%;
+			vertical-align: top;
 		}
 
 		.equal {
@@ -125,7 +126,7 @@
 		}
 
 		function getLetterFromNum(num) {
-			return String.fromCharCode((26 + num) % 26 + charA);
+			return String.fromCharCode((num % 26 + 26) % 26 + charA);
 		}
 
 		function vigenereDecode(word, key, mul = 1) {
@@ -151,7 +152,7 @@
 				if (word[i] === ' ') {
 					decoded += ' ';
 				} else {
-					decoded += getLetterFromNum((getLetterNumAt(word, i) + sign * amount) % 26);
+					decoded += getLetterFromNum(getLetterNumAt(word, i) + sign * amount);
 				}
 			}
 			return decoded;
@@ -181,6 +182,24 @@
 			decoded = rotate(decoded, rot);
 
 			return decoded;
+		}
+
+		function bruteforce(word, key) {
+			const useExtraKey = document.getElementById('useExtraKey').checked;
+			const extraKey = document.getElementById('extraKey').value;
+			const subWord = word.substring(0, key.length);
+			const results = new Map();
+			for (let vig = 1; vig < 26; vig++) {
+				for (let rot = 0; rot < 26; rot++) {
+					let decoded = vigenereDecode(subWord, key, vig);
+					if (useExtraKey) {
+						decoded = vigenereDecode(decoded, extraKey, vig);
+					}
+					decoded = rotate(decoded, rot);
+					results.set(decoded, [vig, rot]);
+				}
+			}
+			return [...results].map(([decoded, [vig, rot]]) => `${decoded}\tvig(${vig})\trot(${rot})`);
 		}
 
 		function toASCII(text, modulo = 10) {
@@ -299,6 +318,19 @@
 			const phoneFrench = arrayToString(toPhoneDigits(decodedVigFrench));
 			appendTitle("Phone key digit");
 			appendResult(phoneEnglish, phoneFrench);
+
+			const bruteforceEnglish = !swap ? bruteforce(inputEnglish, KEY_ENGLISH) : bruteforce(KEY_ENGLISH, inputEnglish);
+			const bruteforceFrench = !swap ? bruteforce(inputFrench, KEY_FRENCH) : bruteforce(KEY_FRENCH, inputFrench);
+
+			if (bruteforceEnglish.length > 1) {
+				resultEnglish += '<b>Bruteforcing vig() and rot()</b>\n';
+				resultEnglish += bruteforceEnglish.join('\n') + '\n';
+			}
+
+			if (bruteforceFrench.length > 1) {
+				resultFrench += '<b>Bruteforcing vig() and rot()</b>\n';
+				resultFrench += bruteforceFrench.join('\n') + '\n';
+			}
 
 			document.getElementById('result-english').innerHTML = resultEnglish;
 			document.getElementById('result-french').innerHTML = resultFrench;
