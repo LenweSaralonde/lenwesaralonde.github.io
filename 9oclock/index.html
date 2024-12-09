@@ -78,10 +78,6 @@
 		}
 	</style>
 	<script>
-
-		const KEY_ENGLISH = 'JYPFFQVY';
-		const KEY_FRENCH = 'QLEITRRC';
-
 		const charA = 'A'.charCodeAt(0);
 		const PHONE_DIGITS = {
 			A: 2,
@@ -187,11 +183,10 @@
 		function bruteforce(word, key) {
 			const useExtraKey = document.getElementById('useExtraKey').checked;
 			const extraKey = document.getElementById('extraKey').value;
-			const subWord = word.substring(0, key.length);
 			const results = new Map();
 			for (let vig = 1; vig < 26; vig++) {
 				for (let rot = 0; rot < 26; rot++) {
-					let decoded = vigenereDecode(subWord, key, vig);
+					let decoded = vigenereDecode(word, key, vig);
 					if (useExtraKey) {
 						decoded = vigenereDecode(decoded, extraKey, vig);
 					}
@@ -243,16 +238,20 @@
 		}
 
 		function isMagicNumber(num) {
-			return num === 4 ||num === 11 || num === 17 || num === 20 || num === 24;
+			return num === 4 || num === 11 || num === 17 || num === 20 || num === 24;
 		}
 
 		function calculate() {
 			const inputEnglish = normalize(document.getElementById('input-english').value);
 			const inputFrench = normalize(document.getElementById('input-french').value);
+			const keyEnglish = normalize(document.getElementById('key-english').value);
+			const keyFrench = normalize(document.getElementById('key-french').value);
 			const inputExtraKey = normalize(document.getElementById('extraKey').value);
 			const swap = document.getElementById('swap').checked;
 			document.getElementById('input-english').value = inputEnglish;
 			document.getElementById('input-french').value = inputFrench;
+			document.getElementById('key-english').value = keyEnglish;
+			document.getElementById('key-french').value = keyFrench;
 			document.getElementById('extraKey').value = inputExtraKey;
 			const english = inputEnglish.replace(/\s+/g, '');
 			const french = inputFrench.replace(/\s+/g, '');
@@ -294,8 +293,8 @@
 				}
 			}
 
-			const decodedVigEnglish = swap ? calculateInput(KEY_ENGLISH, english) : calculateInput(english, KEY_ENGLISH);
-			const decodedVigFrench = swap ? calculateInput(KEY_FRENCH, french) : calculateInput(french, KEY_FRENCH);
+			const decodedVigEnglish = swap ? calculateInput(keyEnglish, english) : calculateInput(english, keyEnglish);
+			const decodedVigFrench = swap ? calculateInput(keyFrench, french) : calculateInput(french, keyFrench);
 			resultEnglish += `Deciphered text &nbsp; <i style="font-size: 0.9em"><a href="../wow-anagram-solver" target="_blank">Open Anagram Solver</a></i>\n`;
 			resultFrench += `Deciphered text\n`;
 			appendResult(decodedVigEnglish, decodedVigFrench);
@@ -335,17 +334,17 @@
 			appendTitle("Phone key digit");
 			appendResult(phoneEnglish, phoneFrench);
 
-			const bruteforceEnglish = !swap ? bruteforce(inputEnglish, KEY_ENGLISH) : bruteforce(KEY_ENGLISH, inputEnglish);
-			const bruteforceFrench = !swap ? bruteforce(inputFrench, KEY_FRENCH) : bruteforce(KEY_FRENCH, inputFrench);
+			const bruteforceEnglish = !swap ? bruteforce(inputEnglish, keyEnglish) : bruteforce(keyEnglish, inputEnglish);
+			const bruteforceFrench = !swap ? bruteforce(inputFrench, keyFrench) : bruteforce(keyFrench, inputFrench);
 
 			if (bruteforceEnglish.length > 1) {
 				resultEnglish += '<b>Bruteforcing vig() and rot()</b>\n';
-				resultEnglish += bruteforceEnglish.map(formatBruteforce).join('\n') + '\n';
+				resultEnglish += '<div style="font-size: 0.95em; font-family: monospace">' + bruteforceEnglish.map(formatBruteforce).join('\n') + '</div>\n';
 			}
 
 			if (bruteforceFrench.length > 1) {
 				resultFrench += '<b>Bruteforcing vig() and rot()</b>\n';
-				resultFrench += bruteforceFrench.map(formatBruteforce).join('\n') + '\n';
+				resultFrench += '<div style="font-size: 0.95em; font-family: monospace">' + bruteforceFrench.map(formatBruteforce).join('\n') + '</div>\n';
 			}
 
 			document.getElementById('result-english').innerHTML = resultEnglish;
@@ -387,6 +386,16 @@
 					</td>
 					<td><input type="text" name="input-french" id="input-french" class="bigField" maxlength="20"
 							onkeyup="calculate()" onchange="calculate()" placeholder="Enter French text to decrypt...">
+					</td>
+				</tr>
+				<tr>
+					<td><label for="key-english">Key</label><br><input type="text" name="key-english" id="key-english"
+							class="bigField" maxlength="20" onkeyup="calculate()" onchange="calculate()"
+							value="JYPFFQVY" placeholder="Enter English key...">
+					</td>
+					<td><label for="key-french">Key</label><br><input type="text" name="key-french" id="key-french"
+							class="bigField" maxlength="20" onkeyup="calculate()" onchange="calculate()"
+							value="QLEITRRC" placeholder="Enter French key...">
 					</td>
 				</tr>
 				<tr>
