@@ -199,7 +199,7 @@
 					results.set(decoded, [vig, rot]);
 				}
 			}
-			return [...results].map(([decoded, [vig, rot]]) => `${decoded}\tvig(${vig})\trot(${rot})`);
+			return [...results];
 		}
 
 		function toASCII(text, modulo = 10) {
@@ -242,6 +242,10 @@
 			return result;
 		}
 
+		function isMagicNumber(num) {
+			return num === 4 ||num === 11 || num === 17 || num === 20 || num === 24;
+		}
+
 		function calculate() {
 			const inputEnglish = normalize(document.getElementById('input-english').value);
 			const inputFrench = normalize(document.getElementById('input-french').value);
@@ -276,6 +280,19 @@
 			const appendComment = function (commentEnglish = '', commentFrench = '') {
 				resultEnglish += commentEnglish + "\n";
 				resultFrench += commentFrench + "\n";
+			}
+
+			const formatBruteforce = function ([decoded, [vig, rot]]) {
+				const text = `${decoded}\tvig(${vig})\trot(${rot})`;
+				const score = (isMagicNumber(vig) ? 1 : 0) + (isMagicNumber(rot) ? 1 : 0);
+
+				if (score === 1) {
+					return '<div style="color: #FFF; background-color: #000; width: 100%; display: inline-block">' + text + '</div>';
+				} else if (score === 2) {
+					return '<div style="color: #000; background-color: #FF0; width: 100%; display: inline-block">' + text + '</div>';
+				} else {
+					return text;
+				}
 			}
 
 			const decodedVigEnglish = swap ? calculateInput(KEY_ENGLISH, english) : calculateInput(english, KEY_ENGLISH);
@@ -324,12 +341,12 @@
 
 			if (bruteforceEnglish.length > 1) {
 				resultEnglish += '<b>Bruteforcing vig() and rot()</b>\n';
-				resultEnglish += bruteforceEnglish.join('\n') + '\n';
+				resultEnglish += bruteforceEnglish.map(formatBruteforce).join('\n') + '\n';
 			}
 
 			if (bruteforceFrench.length > 1) {
 				resultFrench += '<b>Bruteforcing vig() and rot()</b>\n';
-				resultFrench += bruteforceFrench.join('\n') + '\n';
+				resultFrench += bruteforceFrench.map(formatBruteforce).join('\n') + '\n';
 			}
 
 			document.getElementById('result-english').innerHTML = resultEnglish;
