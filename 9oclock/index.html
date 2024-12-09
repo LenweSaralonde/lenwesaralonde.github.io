@@ -344,23 +344,24 @@
 				<tr>
 					<td colspan="2">
 						<div style="text-align: center">
-							<label for="swap" style="width: 100%"><input type="checkbox" id="swap" name="swap" step="1"
-									value="1" onkeyup="calculate()" onchange="calculate()"> Swap key and input</label>
+							<label for="swap" style="width: 100%"><input type="checkbox" id="swap" name="swap" value="1"
+									onkeyup="calculate()" onchange="calculate()"> Swap key and input</label>
 						</div><br>
 						<label for="vigenere">Vigenere</label>
-						× <input type="number" id="vigenere" name="vigenere" step="1" style="width: 50px" value="1"
-							onkeyup="calculate()" onchange="calculate()"> <i style="font-size: 0.9em">Use a negative
+						× <input type="number" id="vigenere" name="vigenere" step="1" min="-25" max="25"
+							style="width: 50px" value="1" onkeyup="calculate()" onchange="calculate()"> <i
+							style="font-size: 0.9em">Use a negative
 							value to encode instead of
 							decoding, 0 to disable.</i><br><br>
-						<label for="useExtraKey"><input type="checkbox" id="useExtraKey" name="useExtraKey" step="1"
-								value="1" onkeyup="calculate()" onchange="calculate()"> extra key</label>
-						<input type="text" id="extraKey" name="extraKey" step="1"
-							style="width: 150px; margin-left: 14px" value="BBCDCAAE" onkeyup="calculate()"
-							onchange="calculate()" maxlength="20"> <i style="font-size: 0.9em">11232004 is BBCDCAAE,
+						<label for="useExtraKey"><input type="checkbox" id="useExtraKey" name="useExtraKey" value="1"
+								onkeyup="calculate()" onchange="calculate()"> extra key</label>
+						<input type="text" id="extraKey" name="extraKey" style="width: 150px; margin-left: 14px"
+							value="BBCDCAAE" onkeyup="calculate()" onchange="calculate()" maxlength="20"> <i
+							style="font-size: 0.9em">11232004 is BBCDCAAE,
 							11232024 is BBCDCACE</i><br><br>
 						<label for="rotate">Rotate</label>
-						× <input type="number" id="rotate" name="rotate" step="1" style="width: 50px" value="0"
-							onkeyup="calculate()" onchange="calculate()"><br><br>
+						× <input type="number" id="rotate" name="rotate" step="1" min="-25" max="25" style="width: 50px"
+							value="0" onkeyup="calculate()" onchange="calculate()"><br><br>
 					</td>
 				</tr>
 				<tr class="result">
