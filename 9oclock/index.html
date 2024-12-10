@@ -205,10 +205,10 @@
 			return result;
 		}
 
-		function toLetter(text, modulo = 10) {
+		function toLetter(text, modulo = 10, firstIndex = 1) {
 			const result = [];
 			for (let i = 0; i < text.length; i++) {
-				result.push((text.charCodeAt(i) - charA + 1) % modulo % 10);
+				result.push((text.charCodeAt(i) - charA + firstIndex) % modulo % 10);
 			}
 			return result;
 		}
@@ -301,13 +301,18 @@
 
 			const asciiEnglish10 = arrayToString(toASCII(decodedVigEnglish, 10));
 			const asciiFrench10 = arrayToString(toASCII(decodedVigFrench, 10));
-			appendTitle("ASCII char % 10");
+			appendTitle("ASCII char (0-255) % 10");
 			appendResult(asciiEnglish10, asciiFrench10);
 
 			const letterEnglish10 = arrayToString(toLetter(decodedVigEnglish, 10));
 			const letterFrench10 = arrayToString(toLetter(decodedVigFrench, 10));
-			appendTitle("Letter number % 10");
+			appendTitle("Letter number (1-26) % 10");
 			appendResult(letterEnglish10, letterFrench10);
+
+			const letterEnglish10Index0 = arrayToString(toLetter(decodedVigEnglish, 10, 0));
+			const letterFrench10Index0 = arrayToString(toLetter(decodedVigFrench, 10, 0));
+			appendTitle("Letter number (0-25) % 10");
+			appendResult(letterEnglish10Index0, letterFrench10Index0);
 
 			const bitsEnglish = arrayToString(toBitCount(decodedVigEnglish));
 			const bitsFrench = arrayToString(toBitCount(decodedVigFrench));
@@ -316,13 +321,18 @@
 
 			const asciiEnglish17 = arrayToString(toASCII(decodedVigEnglish, 17));
 			const asciiFrench17 = arrayToString(toASCII(decodedVigFrench, 17));
-			appendTitle("ASCII char % 17 % 10");
+			appendTitle("ASCII char (0-255) % 17 % 10");
 			appendResult(asciiEnglish17, asciiFrench17);
 
 			const letterEnglish17 = arrayToString(toLetter(decodedVigEnglish, 17));
 			const letterFrench17 = arrayToString(toLetter(decodedVigFrench, 17));
-			appendTitle("Letter number % 17 % 10");
+			appendTitle("Letter number (1-26) % 17 % 10");
 			appendResult(letterEnglish17, letterFrench17);
+
+			const letterEnglish17Index0 = arrayToString(toLetter(decodedVigEnglish, 17, 0));
+			const letterFrench17Index0 = arrayToString(toLetter(decodedVigFrench, 17, 0));
+			appendTitle("Letter number (0-25) % 17 % 10");
+			appendResult(letterEnglish17Index0, letterFrench17Index0);
 
 			const bitsEnglish17 = arrayToString(toBitCount(decodedVigEnglish, 17));
 			const bitsFrench17 = arrayToString(toBitCount(decodedVigFrench, 17));
