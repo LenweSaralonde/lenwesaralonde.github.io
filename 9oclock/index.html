@@ -283,7 +283,7 @@
 
 			const formatBruteforce = function ([decoded, [vig, rot]]) {
 				const text = `${decoded}\tvig(${vig})\trot(${rot})`;
-				if ((isMagicNumber(vig) || vig === 1) && isMagicNumber(rot)) {
+				if ((isMagicNumber(vig) || vig === 1) && (isMagicNumber(rot) || rot <= 1)) {
 					return '<div style="color: #000; background-color: #FF0; width: 100%; display: inline-block">' + text + '</div>';
 				}
 				else if (isMagicNumber(vig) || isMagicNumber(rot)) {
