@@ -78,7 +78,8 @@
 		}
 	</style>
 	<script>
-		const charA = 'A'.charCodeAt(0);
+		const FIRST_CHAR = 'A'.charCodeAt(0);
+		const RANGE = 26;
 		const PHONE_DIGITS = {
 			A: 2,
 			B: 2,
@@ -118,11 +119,11 @@
 		}
 
 		function getLetterNumAt(str, pos) {
-			return str.charCodeAt(pos) - charA;
+			return str.charCodeAt(pos) - FIRST_CHAR;
 		}
 
 		function getLetterFromNum(num) {
-			return String.fromCharCode((num % 26 + 26) % 26 + charA);
+			return String.fromCharCode((num % RANGE + RANGE) % RANGE + FIRST_CHAR);
 		}
 
 		function vigenereDecode(word, key, mul = 1) {
@@ -184,8 +185,8 @@
 			const useExtraKey = document.getElementById('useExtraKey').checked;
 			const extraKey = document.getElementById('extraKey').value;
 			const results = new Map();
-			for (let vig = 1; vig < 26; vig++) {
-				for (let rot = 0; rot < 26; rot++) {
+			for (let vig = 1; vig < RANGE; vig++) {
+				for (let rot = 0; rot < RANGE; rot++) {
 					let decoded = vigenereDecode(word, key, vig);
 					if (useExtraKey) {
 						decoded = vigenereDecode(decoded, extraKey, vig);
@@ -208,7 +209,7 @@
 		function toLetter(text, modulo = 10, firstIndex = 1) {
 			const result = [];
 			for (let i = 0; i < text.length; i++) {
-				result.push((text.charCodeAt(i) - charA + firstIndex) % modulo % 10);
+				result.push((text.charCodeAt(i) - FIRST_CHAR + firstIndex) % modulo % 10);
 			}
 			return result;
 		}
