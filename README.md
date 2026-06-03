@@ -33,6 +33,10 @@ In addition to the main main add-on and some plugins to provide additional featu
 * **Musician MIDI** ([GitHub](https://github.com/LenweSaralonde/MusicianMIDI) / [CurseForge](https://www.curseforge.com/wow/addons/musicianmidi)): Play live music using a MIDI keyboard.
 * **Musician EZK** ([GitHub](https://github.com/LenweSaralonde/MusicianEZK) / [CurseForge](https://www.curseforge.com/wow/addons/musicianezk)): Play live using Guild Wars 2 simplified key bindings.
 
+## Hardware
+
+* **[Musician MIDI Pico Translator](https://github.com/LenweSaralonde/musician-midi-pico-translator)**: Small plug and play adapter that translates MIDI messages from a controller into computer keyboard keystrokes for the [Musician MIDI](https://github.com/LenweSaralonde/MusicianMIDI) plugin, without requiring extra third party software.
+
 # Adaptive controller for World of Warcraft
 
 The goal of this project was to make Romain, a World of Warcraft friend with severe disability, to regain control of the game so he could play again, despîte the evolution of his condition.
