@@ -2,12 +2,13 @@
 **@LenweSaralonde** on [GitHub](https://github.com/LenweSaralonde) / [YouTube](https://youtube.com/LenweSaralonde) / [Instagram](https://instagram.com/LenweSaralonde) / [Facebook](https://facebook.com/LenweSaralonde) / [TikTok](https://tiktok.com/@lenwesaralonde) / [Twitch](https://twitch.tv/LenweSaralonde) / [Twitter](https://twitter.com/LenweSaralonde) / [Bluesky](https://bsky.app/profile/lenwe.io) / <a rel="me" href="https://mastouille.fr/@LenweSaralonde">Mastodon</a>
 
 **Table of contents**
-* [Musician](#musician--musicianlenweio)
+* [Musician add-on for World of Warcraft](#musician-add-on-for-world-of-warcraft--musicianlenweio)
 * [Adaptive controller for World of Warcraft](#adaptive-controller-for-world-of-warcraft)
+* [Pipe organ console controller](#pipe-organ-console-controller)
 * [8-port MIDI merger](#8-port-midi-merger)
 * [Other add-ons for World of Warcraft](#other-add-ons-for-world-of-warcraft)
 
-# Musician – [musician.lenwe.io](https://musician.lenwe.io)
+# Musician add-on for World of Warcraft – [musician.lenwe.io](https://musician.lenwe.io)
 
 Musician is an UI add-on for *World of Warcraft* that provides music playing capability to the players. Unlike other popular MMORPGs such as *Lord of the Rings Online* or *Final Fantasy XIV*, *World of Warcraft* lacks a "bard class" or "music performance mode" which is highly appreciated by roleplayers. The goal of Musician is to fill this gap the best as possible using the limited features of the WoW UI API.
 
@@ -41,6 +42,24 @@ The core of the project is a [Makey Makey](https://makeymakey.com/) card, a chea
 More information in the video description. Enable CC for english subtitles.
 
 <div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/KrIIDFBODwA" title="Adaptive controller for World of Warcraft video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+
+# Pipe organ console controller
+
+[Joan's pipe organ](https://www.lookmumnocomputer.com/joans-church-organ) is a 100 year old church organ salvaged by musician, maker and youtuber Sam Battle a.k.a [LOOK MUM NO COMPUTER](https://www.youtube.com/LOOKMUMNOCOMPUTER).
+
+The project consists in replacing the old electromechanical controls made of thousands of wires and relays by MIDI using modern off-the-shelf components.
+
+The organ console, that consists of 2 manuals (keyboards), a pedalboard, 16 stops and a presets board, was converted by Sam into a MIDI controller, powered by an Arduino Nano board. It controls 4 rows of pipes (principal, string, flute and reed), each of one of them having their own MIDI channel.
+
+This code addresses several issues encountered by Sam such as concurrent MIDI messages resulting in the combination of certain key and stops configuration and buffer overruns when complex songs are played on the organ.
+
+The process was to first test the code on an emulator then on a test rig using my 2 MIDI keyboards and my computer to emulate the organ pipes, then send it to Sam on Patreon where he then posted the result on video.
+
+The whole process has been documented in the part 15 of his video series about the Joan's pipe organ restoration project.
+
+<div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/HzKAckJEd_8?list=PLluPQLh1xzlI7EMB5qIxDd_1OLE-Z_kyC&index=16&si=QullWxJ_QEEneK4u&t=93" title="100 year old church organs had programmable presets! I BOUGHT A CHURCH ORGAN - part 15" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+
+* GitHub repository: [https://github.com/LenweSaralonde/LMNC-organ-console](https://github.com/LenweSaralonde/LMNC-organ-console)
 
 # 8-port MIDI merger
 
