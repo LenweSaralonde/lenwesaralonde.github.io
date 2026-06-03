@@ -55,6 +55,8 @@ This code addresses several issues encountered by Sam such as concurrent MIDI me
 
 The process was to first test the code on an emulator then on a test rig using my 2 MIDI keyboards and my computer to emulate the organ pipes, then send it to Sam on Patreon where he then posted the result on video.
 
+![Organ console test rig](assets/img/lmnc-organ-test-rig.jpg)
+
 The whole process has been documented in the part 15 of his video series about the Joan's pipe organ restoration project.
 
 <div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/HzKAckJEd_8?list=PLluPQLh1xzlI7EMB5qIxDd_1OLE-Z_kyC&index=16&si=QullWxJ_QEEneK4u&t=93" title="100 year old church organs had programmable presets! I BOUGHT A CHURCH ORGAN - part 15" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
