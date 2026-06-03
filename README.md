@@ -59,7 +59,7 @@ The process was to first test the code on an emulator then on a test rig using m
 
 The whole process has been documented in the part 15 of his video series about the Joan's pipe organ restoration project.
 
-<div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/HzKAckJEd_8?list=PLluPQLh1xzlI7EMB5qIxDd_1OLE-Z_kyC&index=16&si=QullWxJ_QEEneK4u&t=93" title="100 year old church organs had programmable presets! I BOUGHT A CHURCH ORGAN - part 15" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+<div class="youtube"><iframe width="560" height="315" src="https://www.youtube.com/embed/HzKAckJEd_8?list=PLluPQLh1xzlI7EMB5qIxDd_1OLE-Z_kyC&index=16&si=QullWxJ_QEEneK4u&start=93" title="100 year old church organs had programmable presets! I BOUGHT A CHURCH ORGAN - part 15" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
 
 * GitHub repository: [https://github.com/LenweSaralonde/LMNC-organ-console](https://github.com/LenweSaralonde/LMNC-organ-console)
 
